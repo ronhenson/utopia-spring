@@ -10,7 +10,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @Getter
 @ToString
-public class ResourceExistsException extends Exception {
+public class ResourceExistsException extends RuntimeException {
 	
 	private static final long serialVersionUID = -1336797486884051669L;
 	

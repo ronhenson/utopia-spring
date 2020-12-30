@@ -14,7 +14,6 @@ derby.log
 spring-test/test-output/
 .gradle
 argfile*
-pom.xml
 activemq-data/
 
 classes/
@@ -32,6 +31,7 @@ target/
 .project
 spring-*/src/main/java/META-INF/MANIFEST.MF
 .metadata
+.factorypath
 
 # IDEA artifacts and output dirs
 *.iml

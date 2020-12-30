@@ -7,12 +7,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.smoothstack.airlines.entity.primaryKeys.FlightKey;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -24,7 +22,6 @@ import lombok.NoArgsConstructor;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "tbl_flight")
-@IdClass(FlightKey.class)
 public class Flight {
 
 	@NonNull
@@ -32,22 +29,25 @@ public class Flight {
 	private Integer flightId;
 
 	@NonNull
-	@Id
 	private Timestamp departTime;
 
 	@NonNull
-	@Id
-	private Integer departCityId;
+	private String departCityId;
 
 	@NonNull
-	@Id
-	private Integer arriveCityId;
+	private String arriveCityId;
 
 	@NonNull
 	private Integer seatsAvailable;
 	
 	@NonNull
 	private Float price;
+	
+	@NonNull
+	private Timestamp arrivalTime;
+	
+	@NonNull
+	private String flightNumber;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

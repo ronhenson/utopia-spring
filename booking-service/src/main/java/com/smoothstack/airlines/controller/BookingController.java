@@ -16,18 +16,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smoothstack.airlines.entity.Booking;
+import com.smoothstack.airlines.entity.BookingRequest;
 import com.smoothstack.airlines.exceptions.ResourceExistsException;
 import com.smoothstack.airlines.exceptions.ResourceNotFoundException;
 import com.smoothstack.airlines.service.BookingService;
 
 @RestController
-@RequestMapping("/bookings")
+@RequestMapping("/booking")
 public class BookingController {
 
 	@Autowired
 	BookingService bookingService;
 
-	@GetMapping("/travelers/{travelerId}")
+	@GetMapping("/traveler/{travelerId}")
 	public List<Booking> getAllBookings(@PathVariable Integer travelerId) throws ResourceNotFoundException {
 		return bookingService.getBookingsByTraveler(travelerId);
 	}
@@ -37,10 +38,11 @@ public class BookingController {
 		return bookingService.getAllBookings();
 	}
 
-	@PostMapping("/travelers/{travelerId}")
-	public ResponseEntity<Booking> createBooking(@RequestBody Booking booking, @PathVariable Integer travelerId) throws ResourceExistsException, ResourceNotFoundException, URISyntaxException  {
-		bookingService.createBooking(booking, travelerId);
-		return ResponseEntity.created(new URI("/bookings/" + booking.getBookingId())).body(booking);
+	@PostMapping("/flight/{flightId}")
+	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest request, @PathVariable Integer flightId) throws ResourceExistsException, ResourceNotFoundException, URISyntaxException  {
+		Booking booking = request.getBooking();
+		bookingService.createBooking(booking, flightId, request.getTravelerIds());
+		return ResponseEntity.created(new URI("/booking/" + booking.getBookingId())).body(booking);
 	}
 
 	@PutMapping

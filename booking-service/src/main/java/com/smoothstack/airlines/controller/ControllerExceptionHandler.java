@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.smoothstack.airlines.exceptions.ResourceExistsException;
 import com.smoothstack.airlines.exceptions.ResourceNotFoundException;
 
@@ -33,5 +35,11 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(ResourceNotFoundException.class)
 	protected ResponseEntity<Object> handleNotFound(ResourceNotFoundException ex) {
 		return handleExceptionInternal(ex, ex.getMessage(), null, HttpStatus.NOT_FOUND, null);
+	}
+	
+	@ExceptionHandler(JsonProcessingException.class)
+	protected ResponseEntity<Object> handleBadJson(JsonProcessingException ex) {
+		System.out.println("handling bad JSON");
+		return handleExceptionInternal(ex, ex, null, HttpStatus.BAD_REQUEST, null);
 	}
 }

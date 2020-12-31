@@ -1,30 +1,28 @@
 package com.smoothstack.airlines.integrationTest;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+
+//import java.net.http.HttpClient;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+//import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.smoothstack.airlines.controller.BookingController;
 import com.smoothstack.airlines.entity.Booking;
-import com.smoothstack.airlines.exceptions.ResourceNotFoundException;
+import com.smoothstack.airlines.entity.BookingRequest;
 import com.smoothstack.airlines.exceptions.ResourceExistsException;
+import com.smoothstack.airlines.exceptions.ResourceNotFoundException;
 
 
 /*
@@ -35,13 +33,13 @@ import com.smoothstack.airlines.exceptions.ResourceExistsException;
 @TestMethodOrder(OrderAnnotation.class)
 public class IntegrationTest {
 	
-	@Autowired
-	private ServletWebServerApplicationContext appContext;
+//	@Autowired
+//	private ServletWebServerApplicationContext appContext;
 	
 	@Autowired
 	private BookingController bookingController;
 	
-	private HttpClient http = HttpClient.newHttpClient();
+//	private HttpClient http = HttpClient.newHttpClient();
 	
 	@DisplayName("delete all bookings")
 	@Test
@@ -71,17 +69,20 @@ public class IntegrationTest {
 	@Test
 	@Order(3)
 	void createBookingInvalidTravelerId() throws Exception {
-		Booking booking = new Booking(1, 1, true, "1", 1);
+		Booking booking = new Booking(true, "1", 1);
+		BookingRequest request = new BookingRequest(booking, List.of(999));
 		
-		assertThrows(ResourceNotFoundException.class, () -> bookingController.createBooking(booking, 9999));
+		
+		assertThrows(ResourceNotFoundException.class, () -> bookingController.createBooking(request, 9999));
 	}
 	
 	@DisplayName("create booking for traveler 1, id 96")
 	@Test
 	@Order(4)
 	void createBooking96() throws Exception {
-		Booking booking = new Booking(96, 1, true, "1", 1);
-		ResponseEntity<Booking> response = bookingController.createBooking(booking, 1);
+		Booking booking = new Booking(true, "1", 1);
+		BookingRequest request = new BookingRequest(booking, List.of(96));
+		ResponseEntity<Booking> response = bookingController.createBooking(request, 1);
 		
 		assertEquals(response.getStatusCode(), HttpStatus.CREATED);
 		assertEquals(response.getBody(), booking);
@@ -92,7 +93,7 @@ public class IntegrationTest {
 	@Test
 	@Order(5)
 	void updateBookingActive() throws Exception {
-		Booking booking = new Booking(96, 1, false, "1", 1);
+		Booking booking = new Booking(false, "1", 1);
 		ResponseEntity<Booking> response = bookingController.updateBooking(booking);
 		List<Booking> bookings = bookingController.getAllBookings(1);
 		
@@ -106,8 +107,9 @@ public class IntegrationTest {
 	@Test
 	@Order(6)
 	void createBooking97() throws Exception {
-		Booking booking = new Booking(97, 1, true, "1", 1);
-		ResponseEntity<Booking> response = bookingController.createBooking(booking, 1);
+		Booking booking = new Booking(true, "1", 1);
+		BookingRequest request = new BookingRequest(booking, List.of(999));
+		ResponseEntity<Booking> response = bookingController.createBooking(request, 1);
 		
 		assertEquals(response.getStatusCode(), HttpStatus.CREATED);
 		assertEquals(response.getBody(), booking);
@@ -117,8 +119,9 @@ public class IntegrationTest {
 	@Test
 	@Order(7)
 	void createBooking98() throws Exception {
-		Booking booking = new Booking(98, 1, true, "4325432", 1);
-		ResponseEntity<Booking> response = bookingController.createBooking(booking, 2);
+		Booking booking = new Booking(true, "4325432", 1);
+		BookingRequest request = new BookingRequest(booking, List.of(999));
+		ResponseEntity<Booking> response = bookingController.createBooking(request, 2);
 		
 		assertEquals(response.getStatusCode(), HttpStatus.CREATED);
 		assertEquals(response.getBody(), booking);
@@ -165,7 +168,8 @@ public class IntegrationTest {
 	@Test
 	@Order(11)
 	void addBookingAlreadyExists() throws Exception {
-		Booking booking = new Booking(97, 1, false, "asdasd", 1);
-		assertThrows(ResourceExistsException.class, () -> bookingController.createBooking(booking, 1));
+		Booking booking = new Booking(false, "asdasd", 1);
+		BookingRequest request = new BookingRequest(booking, List.of(999));
+		assertThrows(ResourceExistsException.class, () -> bookingController.createBooking(request, 1));
 	}
 }

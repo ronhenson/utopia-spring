@@ -2,6 +2,11 @@ package com.smoothstack.airlines.entity;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class BookingTravelerKey implements Serializable {
 	/**
 	 * 

@@ -28,7 +28,6 @@ import com.smoothstack.airlines.entity.Booking;
 import com.smoothstack.airlines.entity.BookingsHasTravelers;
 import com.smoothstack.airlines.entity.Flight;
 import com.smoothstack.airlines.entity.Traveler;
-import com.smoothstack.airlines.entity.primaryKeys.BookingKey;
 import com.smoothstack.airlines.exceptions.ResourceExistsException;
 import com.smoothstack.airlines.exceptions.ResourceNotFoundException;
 import com.smoothstack.constants.ResourceType;
@@ -66,34 +65,34 @@ public class BookingServiceTest {
 	@DisplayName("Get all bookings by traveler id")
 	@Test
 	void testGetBookingsByTraveler() throws Exception {
-		Booking booking1 = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg").bookerId(21)
+		Booking booking1 = Booking.builder().bookingId(1).isActive(true).stripeId("abcdefg").bookerId(21)
 				.build();
-		Booking booking2 = Booking.builder().bookingId(2).flightId(5).isActive(false).stripeId("123456").bookerId(56)
+		Booking booking2 = Booking.builder().bookingId(2).isActive(false).stripeId("123456").bookerId(56)
 				.build();
-		BookingsHasTravelers bookingTraveler1 = new BookingsHasTravelers(1, 1, 1);
-		BookingsHasTravelers bookingTraveler2 = new BookingsHasTravelers(2, 5, 1);
-		BookingKey bookingKey1 = new BookingKey(1, 1);
-		BookingKey bookingKey2 = new BookingKey(2, 5);
+		BookingsHasTravelers bookingTraveler1 = new BookingsHasTravelers(1, 1);
+		BookingsHasTravelers bookingTraveler2 = new BookingsHasTravelers(2, 5);
+//		BookingKey bookingKey1 = new BookingKey(1, 1);
+//		BookingKey bookingKey2 = new BookingKey(2, 5);
 	
 		when(travelerDao.findById(1)).thenReturn(Optional.of(new Traveler()));
-		when(bookingsHasTravelersDao.findByTravelerTravelerId(1)).thenReturn(Set.of(bookingTraveler1, bookingTraveler2));
-		when(bookingDao.findAllById(Set.of(bookingKey1, bookingKey2))).thenReturn(List.of(booking1, booking2));
+		when(bookingsHasTravelersDao.findByTravelerId(1)).thenReturn(Set.of(bookingTraveler1, bookingTraveler2));
+		when(bookingDao.findAllById(Set.of(1, 2))).thenReturn(List.of(booking1, booking2));
 		
 		assertThat(bookingService.getBookingsByTraveler(1), containsInAnyOrder(booking1, booking2));
 		
 		verify(travelerDao).findById(1);
-		verify(bookingsHasTravelersDao).findByTravelerTravelerId(1);
-		verify(bookingDao).findAllById(Set.of(bookingKey1, bookingKey2));
+		verify(bookingsHasTravelersDao).findByTravelerId(1);
+		verify(bookingDao).findAllById(Set.of(1, 2));
 	}
 	
 	@DisplayName("Create new booking, throw exception resource already exists")
 	@Test
 	void testCreateBookingAlreadyExists() throws Exception {
-		Booking booking = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg").bookerId(21)
+		Booking booking = Booking.builder().bookingId(1).isActive(true).stripeId("abcdefg").bookerId(21)
 				.build();
 		when(bookingDao.findByBookingId(booking.getBookingId())).thenReturn(booking);
 		
-		ResourceExistsException thrown = assertThrows(ResourceExistsException.class, () -> bookingService.createBooking(booking, 1));
+		ResourceExistsException thrown = assertThrows(ResourceExistsException.class, () -> bookingService.createBooking(booking, 1, List.of()));
 		assertThat(thrown.getResourceId(), is(1));
 		assertThat(thrown.getResourceType(), is(ResourceType.BOOKING));
 		
@@ -104,12 +103,12 @@ public class BookingServiceTest {
 	@Test
 	void testCreateBookingNoTraveler() throws Exception {
 		Integer travelerId = 99;
-		Booking booking = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg").bookerId(21)
+		Booking booking = Booking.builder().bookingId(1).isActive(true).stripeId("abcdefg").bookerId(21)
 				.build();
 		when(bookingDao.findByBookingId(booking.getBookingId())).thenReturn(null);
 		when(travelerDao.findById(travelerId)).thenReturn(Optional.empty());
 		
-		ResourceNotFoundException thrown = assertThrows(ResourceNotFoundException.class, () -> bookingService.createBooking(booking, travelerId));
+		ResourceNotFoundException thrown = assertThrows(ResourceNotFoundException.class, () -> bookingService.createBooking(booking, 1, List.of()));
 		assertThat(thrown.getResourceId(), is(travelerId));
 		assertThat(thrown.getResourceType(), is(ResourceType.TRAVELER));
 		
@@ -121,32 +120,32 @@ public class BookingServiceTest {
 	@Test
 	void testCreateBooking() throws Exception {
 		Integer travelerId = 99;
-		Booking booking = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg").bookerId(21)
+		Booking booking = Booking.builder().bookingId(1).isActive(true).stripeId("abcdefg").bookerId(21)
 				.build();
 		Timestamp time = Timestamp.from(Instant.now());
-		Flight flight = new Flight(1, time, 2, 2, 200, 250f);
+		Flight flight = new Flight(1, time, "2", "2", 200, 250f, time, "1234");
 		Traveler traveler = new Traveler(travelerId, "Derek", "123 First St", "111", "a@b.c", Timestamp.from(Instant.now()));
 		
 		when(bookingDao.findByBookingId(booking.getBookingId())).thenReturn(null);
 		when(travelerDao.findById(travelerId)).thenReturn(Optional.of(traveler));
-		when(flightDao.findByFlightId(booking.getFlightId())).thenReturn(flight);
+		when(flightDao.findByFlightId(1)).thenReturn(flight);
 		when(bookingDao.save(booking)).thenReturn(booking);
 		
-		Booking savedBooking = bookingService.createBooking(booking, travelerId);
+		Booking savedBooking = bookingService.createBooking(booking, 1, List.of(travelerId));
 		assertThat(savedBooking, is(booking));
 		assertThat(savedBooking.getTravelers(), contains(traveler));
 		assertThat(savedBooking.getFlight(), is(flight));
 		
 		verify(bookingDao).findByBookingId(booking.getBookingId());
 		verify(travelerDao).findById(travelerId);
-		verify(flightDao).findByFlightId(booking.getFlightId());
+		verify(flightDao).findByFlightId(1);
 		verify(bookingDao).save(booking);
 	}
 	
 	@DisplayName("Update booking, throw exception resource not found")
 	@Test
 	void testUpdateBookingNotFound() throws Exception {
-		Booking booking = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg").bookerId(21)
+		Booking booking = Booking.builder().bookingId(1).isActive(true).stripeId("abcdefg").bookerId(21)
 				.build();
 		when(bookingDao.findByBookingId(booking.getBookingId())).thenReturn(null);
 		
@@ -160,9 +159,9 @@ public class BookingServiceTest {
 	@DisplayName("Update booking")
 	@Test
 	void testUpdateBooking() throws Exception {
-		Booking oldBooking = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg").bookerId(21)
+		Booking oldBooking = Booking.builder().bookingId(1).isActive(true).stripeId("abcdefg").bookerId(21)
 				.build();
-		Booking newBooking = Booking.builder().bookingId(1).flightId(5).isActive(false).stripeId("123456").bookerId(56)
+		Booking newBooking = Booking.builder().bookingId(1).isActive(false).stripeId("123456").bookerId(56)
 				.build();
 		
 		when(bookingDao.findByBookingId(newBooking.getBookingId())).thenReturn(oldBooking);

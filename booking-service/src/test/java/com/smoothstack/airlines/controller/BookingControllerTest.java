@@ -1,9 +1,13 @@
 package com.smoothstack.airlines.controller;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.smoothstack.airlines.entity.Booking;
+import com.smoothstack.airlines.entity.BookingRequest;
 import com.smoothstack.airlines.service.BookingService;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,9 +35,9 @@ class BookingControllerTest {
 	@DisplayName("Get all bookings")
 	@Test
 	void testGetAllBookings() throws Exception {
-		Booking booking1 = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg")
+		Booking booking1 = Booking.builder().bookingId(1).isActive(true).stripeId("abcdefg")
 			.bookerId(21).build();
-		Booking booking2 = Booking.builder().bookingId(2).flightId(5).isActive(false).stripeId("123456")
+		Booking booking2 = Booking.builder().bookingId(2).isActive(false).stripeId("123456")
 			.bookerId(56).build();
 		
 		List<Booking> mockedBookings = List.of(booking1, booking2);
@@ -45,19 +50,18 @@ class BookingControllerTest {
 	@DisplayName("Create new booking for traveler id")
 	@Test
 	void testCreateBooking() throws Exception {
-		Booking booking = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg")
-				.bookerId(21).build();
+		Booking booking = Booking.builder().isActive(true).stripeId("abcdefg")
+				.bookerId(1).build();
 		
-		ResponseEntity<Booking> response = bookingController.createBooking(booking, 1);
-		assertThat(response.getBody(), is(booking));
-		assertThat(response.getHeaders().getLocation().getPath(), is("/bookings/1"));
+		BookingRequest request = new BookingRequest(booking, new ArrayList<Integer>());
+		ResponseEntity<Booking> response = bookingController.createBooking(request, 1);
 		assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
 	}
 
 	@DisplayName("Update booking by id")
 	@Test
 	void testUpdateBooking() throws Exception {
-		Booking booking = Booking.builder().bookingId(1).flightId(1).isActive(true).stripeId("abcdefg")
+		Booking booking = Booking.builder().bookingId(1).isActive(true).stripeId("abcdefg")
 				.bookerId(21).build();
 		
 		ResponseEntity<Booking> response = bookingController.updateBooking(booking);

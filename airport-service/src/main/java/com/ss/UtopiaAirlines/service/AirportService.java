@@ -25,7 +25,7 @@ public class AirportService {
 		@Autowired
 		AirportDao airportDao;
 		
-		public Optional<Airport> getAirportById(int id) {
+		public Optional<Airport> getAirportById(String id) {
 			return airportDao.findById(id);
 		}
 		
@@ -41,20 +41,20 @@ public class AirportService {
 		}
 		
 		public Airport addAirport(Airport airport) throws ResourceExistsException {
-			if (airportDao.existsById(airport.getAirportId())) {
+			if (airportDao.existsById(airport.getIataIdent())) {
 				throw new ResourceExistsException();
 			}
 				return airportDao.save(airport);
 		}
 			
 		public Airport updateAirport(Airport airport) throws ResourceDoesNotExistsException {
-			if (airportDao.existsById(airport.getAirportId())) {
+			if (airportDao.existsById(airport.getIataIdent())) {
 				return airportDao.save(airport);
 			}
 			throw new ResourceDoesNotExistsException();
 		}
 			
-		public void deleteAirport(int id) throws ResourceDoesNotExistsException {
+		public void deleteAirport(String id) throws ResourceDoesNotExistsException {
 
 			if (airportDao.existsById(id)) {
 				airportDao.deleteById(id);

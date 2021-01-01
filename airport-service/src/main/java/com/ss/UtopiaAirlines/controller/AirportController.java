@@ -39,7 +39,7 @@ public class AirportController {
 	AirportService airportService;
 	
 	@GetMapping("/id/{airportId}")
-	public Airport getAirportById(@PathVariable int airportId, HttpServletResponse response) {
+	public Airport getAirportById(@PathVariable String airportId, HttpServletResponse response) {
 		Optional<Airport> airport = airportService.getAirportById(airportId);
 		if (airport.isPresent()) {
 			return airport.get();
@@ -49,8 +49,7 @@ public class AirportController {
 	}
 	
 	
-	@RequestMapping(value = {"/cityName"})
-	//@ResponseBody
+	@GetMapping("/cityName")
 	public List<Airport> findByCity(@RequestParam( value = "city", defaultValue = "") String cityAirport,  HttpServletResponse response) {
 		
 		try {
@@ -73,10 +72,10 @@ public class AirportController {
 		    
 	}
 	
-	@PostMapping("/id")
-	public Airport addAirport(@RequestBody Airport airportId, HttpServletResponse response) {
+	@PostMapping
+	public Airport addAirport(@RequestBody Airport airport, HttpServletResponse response) {
 		try {
-			return airportService.addAirport(airportId);
+			return airportService.addAirport(airport);
 		} catch (ResourceExistsException e) {
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
 			return null;
@@ -84,7 +83,7 @@ public class AirportController {
 		
 	}
 	
-	@PutMapping("/id")
+	@PutMapping
 	public Airport updateAirport(@RequestBody Airport airport, HttpServletResponse response) {
 		try {
 			return airportService.updateAirport(airport);
@@ -95,7 +94,7 @@ public class AirportController {
 	}
 	
 	@DeleteMapping("/id/{airportId}")
-	public void deleteAirport(@PathVariable int airportId, HttpServletResponse response) {
+	public void deleteAirport(@PathVariable String airportId, HttpServletResponse response) {
 		try {
 			airportService.deleteAirport(airportId);
 		} catch (ResourceDoesNotExistsException e) {

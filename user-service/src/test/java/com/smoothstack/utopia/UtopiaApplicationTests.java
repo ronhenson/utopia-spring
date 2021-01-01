@@ -1,6 +1,6 @@
-package com.ss.uthopia;
+package com.smoothstack.utopia;
 
-import com.ss.uthopia.controller.UserController;
+import com.smoothstack.utopia.controller.UserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

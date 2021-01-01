@@ -7,7 +7,7 @@ import java.util.List;
 @Table(name = "tbl_booking")
 public class Booking {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long bookingId;
 
 	@ManyToOne()

@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.smoothstack.orchestrator.entity.Booking;
+import com.smoothstack.orchestrator.entity.BookingRequest;
+
 @RestController
 @RequestMapping("/booking")
 public class BookingController {

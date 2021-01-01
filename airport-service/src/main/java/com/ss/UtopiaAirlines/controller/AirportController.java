@@ -32,13 +32,13 @@ import com.ss.UtopiaAirlines.exceptions.ResourceExistsException;
  */
 
 @RestController
-@RequestMapping("/airports")
+@RequestMapping("/airport")
 public class AirportController {
 	
 	@Autowired
 	AirportService airportService;
 	
-	@GetMapping("/id/{airportId}")
+	@GetMapping("/{airportId}")
 	public Airport getAirportById(@PathVariable String airportId, HttpServletResponse response) {
 		Optional<Airport> airport = airportService.getAirportById(airportId);
 		if (airport.isPresent()) {
@@ -49,7 +49,7 @@ public class AirportController {
 	}
 	
 	
-	@GetMapping("/cityName")
+	@GetMapping
 	public List<Airport> findByCity(@RequestParam( value = "city", defaultValue = "") String cityAirport,  HttpServletResponse response) {
 		
 		try {
@@ -93,7 +93,7 @@ public class AirportController {
 		}
 	}
 	
-	@DeleteMapping("/id/{airportId}")
+	@DeleteMapping("/{airportId}")
 	public void deleteAirport(@PathVariable String airportId, HttpServletResponse response) {
 		try {
 			airportService.deleteAirport(airportId);

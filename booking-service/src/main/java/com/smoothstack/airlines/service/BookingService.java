@@ -56,19 +56,19 @@ public class BookingService {
 			throw new ResourceNotFoundException(flightId, ResourceType.FLIGHT);
 		}
 
-		Set<Traveler> travelers = travelerIds.stream().map(id -> {
-			Optional<Traveler> traveler = travelerDao.findById(id);
-			if (traveler.isEmpty()) {
-				throw new ResourceNotFoundException(id, ResourceType.TRAVELER);
-			}
-
-			return traveler.get();
-		}).collect(Collectors.toSet());
-
+		if (travelerIds != null) {
+			Set<Traveler> travelers = travelerIds.stream().map(id -> {
+				Optional<Traveler> traveler = travelerDao.findById(id);
+				if (traveler.isEmpty()) {
+					throw new ResourceNotFoundException(id, ResourceType.TRAVELER);
+				}
+	
+				return traveler.get();
+			}).collect(Collectors.toSet());
+			booking.setTravelers(travelers);
+		}
 		booking.setFlight(flight.get());
-		booking.setTravelers(travelers);
 		return bookingDao.save(booking);
-
 	}
 
 	public void updateBooking(Booking booking) throws ResourceNotFoundException {

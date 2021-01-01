@@ -1,9 +1,7 @@
-package com.smoothstack.airlines.entity;
+package com.smoothstack.orchestrator.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +24,6 @@ public class BookingRequest {
 
 	private List<Integer> travelerIds = new ArrayList<>();
 
-	@JsonIgnore
 	public Booking getBooking() {
 		return new Booking(isActive, stripeId, bookerId);
 	}

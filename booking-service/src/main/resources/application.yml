@@ -4,6 +4,8 @@ server:
       include-message: always
 
 spring:
+   application:
+      name: booking-service
    datasource:
       url: jdbc:mysql://smoothstack-project.cqxybfmjssty.us-east-2.rds.amazonaws.com:3306/utopia
       username: admin

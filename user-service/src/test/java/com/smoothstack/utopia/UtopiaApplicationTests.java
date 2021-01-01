@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-class UthopiaApplicationTests {
+class UtopiaApplicationTests {
 
     @Autowired
     private UserController controller;

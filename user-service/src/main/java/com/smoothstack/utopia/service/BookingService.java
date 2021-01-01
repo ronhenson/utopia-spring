@@ -1,7 +1,7 @@
-package com.ss.uthopia.service;
+package com.smoothstack.utopia.service;
 
-import com.ss.uthopia.dao.BookingDao;
-import com.ss.uthopia.entity.Booking;
+import com.smoothstack.utopia.dao.BookingDao;
+import com.smoothstack.utopia.entity.Booking;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

@@ -1,8 +1,7 @@
-package com.ss.uthopia.dao;
+package com.smoothstack.utopia.dao;
 
-import com.ss.uthopia.entity.Traveler;
+import com.smoothstack.utopia.entity.Traveler;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

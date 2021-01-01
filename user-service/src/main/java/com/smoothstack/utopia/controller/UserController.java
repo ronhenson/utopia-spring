@@ -1,9 +1,9 @@
-package com.ss.uthopia.controller;
+package com.smoothstack.utopia.controller;
 
-import com.ss.uthopia.entity.Booking;
-import com.ss.uthopia.entity.User;
-import com.ss.uthopia.service.BookingService;
-import com.ss.uthopia.service.UserService;
+import com.smoothstack.utopia.entity.User;
+import com.smoothstack.utopia.entity.Booking;
+import com.smoothstack.utopia.service.BookingService;
+import com.smoothstack.utopia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;

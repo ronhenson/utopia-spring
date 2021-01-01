@@ -1,4 +1,4 @@
-package com.ss.uthopia.entity;
+package com.smoothstack.utopia.entity;
 
 import javax.persistence.*;
 

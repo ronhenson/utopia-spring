@@ -1,8 +1,6 @@
 package com.smoothstack.utopia.controller;
 
 import com.smoothstack.utopia.entity.User;
-import com.smoothstack.utopia.entity.Booking;
-import com.smoothstack.utopia.service.BookingService;
 import com.smoothstack.utopia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,8 +14,6 @@ import java.util.*;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private  BookingService bookingService;
 
     @GetMapping("/")
     public ResponseEntity<List<User>> findById(@RequestParam(value = "name", required = false) String name,
@@ -75,14 +71,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
 
-    @GetMapping("/{id}/bookings")
-    public ResponseEntity<Booking> getBookings(@PathVariable long id) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(bookingService.findById(id).get());
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
+
 
 }

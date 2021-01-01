@@ -4,8 +4,8 @@ server:
 spring:
    datasource:
       url: jdbc:mysql://smoothstack-project.cqxybfmjssty.us-east-2.rds.amazonaws.com:3306/utopia
-      username: nouser
-      password: nopass
+      username: ${SPRING_DB_UNAME}
+      password: ${SPRING_DB_PASS}
       
 #spring:
 #   datasource:

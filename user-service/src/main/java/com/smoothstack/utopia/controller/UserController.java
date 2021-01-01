@@ -1,15 +1,12 @@
-package com.ss.uthopia.controller;
+package com.smoothstack.utopia.controller;
 
-import com.ss.uthopia.entity.Booking;
-import com.ss.uthopia.entity.User;
-import com.ss.uthopia.service.BookingService;
-import com.ss.uthopia.service.UserService;
+import com.smoothstack.utopia.entity.User;
+import com.smoothstack.utopia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
 
 @RestController
@@ -17,11 +14,8 @@ import java.util.*;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private  BookingService bookingService;
 
-
-    @GetMapping("")
+    @GetMapping("/")
     public ResponseEntity<List<User>> findById(@RequestParam(value = "name", required = false) String name,
                                                @RequestParam(value = "username", required = false) String username,
                                                @RequestParam(value = "userId", required = false) Long userId,
@@ -41,7 +35,7 @@ public class UserController {
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         if(users.isEmpty())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(users);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(users);
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
@@ -49,7 +43,7 @@ public class UserController {
     public ResponseEntity<User> findById(@PathVariable long id) {
         Optional<User> users= userService.findById(id);
         if(!users.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         return ResponseEntity.status(HttpStatus.OK).body(users.get());
     }
@@ -77,14 +71,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
 
-    @GetMapping("/{id}/bookings")
-    public ResponseEntity<Booking> getBookings(@PathVariable long id) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(bookingService.findById(id).get());
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
+
 
 }

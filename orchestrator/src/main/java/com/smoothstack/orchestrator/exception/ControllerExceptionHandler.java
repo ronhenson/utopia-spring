@@ -1,4 +1,4 @@
-package com.smoothstack.orchestrator.controller;
+package com.smoothstack.orchestrator.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -1,22 +1,13 @@
-package com.ss.UtopiaAirlines.enitity;
+package com.smoothstack.orchestrator.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-/**
- * @author ronh
- *
- */
-
-@Entity
-@Table( name = "tbl_airport")
 public class Airport {
 	
-	@Id
 	private String iataIdent;
+	
 	private String city;
+	
 	private String name;
+	
 	public String getIataIdent() {
 		return iataIdent;
 	}

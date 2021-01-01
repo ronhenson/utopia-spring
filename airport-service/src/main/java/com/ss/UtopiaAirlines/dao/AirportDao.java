@@ -15,7 +15,7 @@ import com.ss.UtopiaAirlines.enitity.Airport;
  *
  */
 @Repository
-public interface AirportDao extends JpaRepository<Airport, Integer >{
+public interface AirportDao extends JpaRepository<Airport, String>{
 	
 	List<Airport> findByCityIgnoreCase(String city);
 

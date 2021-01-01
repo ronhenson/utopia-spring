@@ -1,12 +1,12 @@
-package com.ss.uthopia.dao;
+package com.smoothstack.utopia.dao;
 
-import com.ss.uthopia.entity.User;
-import org.springframework.data.repository.CrudRepository;
+import com.smoothstack.utopia.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserDao extends CrudRepository<User, Long> {
+public interface UserDao extends JpaRepository<User, Long> {
 
    // @Query("SELECT e from User e where (e.userId =:userId or :userId = 0) and (e.name=:name or :name = '') and (e.username=:username or :username = '') and (e.role=:role or :role = 0)")
     List<User> findAll();

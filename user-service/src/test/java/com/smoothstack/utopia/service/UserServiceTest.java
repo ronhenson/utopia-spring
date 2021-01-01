@@ -1,12 +1,12 @@
-package com.ss.uthopia.service;
+package com.smoothstack.utopia.service;
 
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.ss.uthopia.dao.UserDao;
-import com.ss.uthopia.entity.User;
+import com.smoothstack.utopia.dao.UserDao;
+import com.smoothstack.utopia.entity.User;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

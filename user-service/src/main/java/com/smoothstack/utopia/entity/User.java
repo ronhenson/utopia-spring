@@ -1,4 +1,4 @@
-package com.ss.uthopia.entity;
+package com.smoothstack.utopia.entity;
 
 import javax.persistence.*;
 
@@ -6,16 +6,27 @@ import javax.persistence.*;
 @Table(name = "tbl_users")
 public class User {
 	@Id
-	@GeneratedValue
+	@Column(name="userId")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
-	
+
 	private String name;
 	
 	private String username;
 	
 	private String password;
+
+	private String email;
 	
 	private int role;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public Long getUserId() {
 		return userId;

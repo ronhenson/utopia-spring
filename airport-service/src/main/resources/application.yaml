@@ -6,8 +6,8 @@ spring:
       name: airport-service
    datasource:
       url: jdbc:mysql://smoothstack-project.cqxybfmjssty.us-east-2.rds.amazonaws.com:3306/utopia
-      username: admin
-      password: password
+      username: ${SPRING_DB_UNAME}
+      password: ${SPRING_DB_PASS}
       
 #spring:
 #   datasource:

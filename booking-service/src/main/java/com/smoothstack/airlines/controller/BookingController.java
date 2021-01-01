@@ -20,7 +20,6 @@ import com.smoothstack.airlines.entity.BookingRequest;
 import com.smoothstack.airlines.exceptions.ResourceExistsException;
 import com.smoothstack.airlines.exceptions.ResourceNotFoundException;
 import com.smoothstack.airlines.service.BookingService;
-
 @RestController
 @RequestMapping("/booking")
 public class BookingController {

@@ -14,7 +14,6 @@ public class ConfirmationTokenService {
     private final ConfirmationTokenDao confirmationTokenDao;
 
     void saveConfirmationToken(ConfirmationToken confirmationToken) {
-
         confirmationTokenDao.save(confirmationToken);
     }
 

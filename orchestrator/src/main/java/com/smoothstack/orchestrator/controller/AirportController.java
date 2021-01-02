@@ -1,12 +1,6 @@
 package com.smoothstack.orchestrator.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +54,8 @@ public class AirportController {
 
 	@DeleteMapping("/{airportId}")
 	public ResponseEntity<Void> deleteAirport(@PathVariable String airportId) {
-		RequestEntity<Void> request = RequestEntity.delete(URL + "/" + airportId).accept(MediaType.APPLICATION_JSON).build();
+		RequestEntity<Void> request = RequestEntity.delete(URL + "/" + airportId).accept(MediaType.APPLICATION_JSON)
+				.build();
 		return restTemplate.exchange(request, Void.class);
 	}
 }

@@ -41,7 +41,6 @@ public class BookingController {
 	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest request, @PathVariable Integer flightId) throws ResourceExistsException, ResourceNotFoundException, URISyntaxException  {
 		Booking booking = request.getBooking();
 		bookingService.createBooking(booking, flightId, request.getTravelerIds());
-		//TODO: get booking id
 		return ResponseEntity.created(new URI("/booking/" + booking.getBookingId())).body(booking);
 	}
 

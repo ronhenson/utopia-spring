@@ -4,3 +4,26 @@ server:
 spring:
    application:
       name: orchestrator
+   datasource:
+      url: jdbc:mysql://smoothstack-project.cqxybfmjssty.us-east-2.rds.amazonaws.com:3306/utopia
+      username: ${SPRING_DB_UNAME}
+      password: ${SPRING_DB_PASS}
+   jpa:
+      hibernate:
+        naming:
+           implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+           physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+   mail:
+      host: smtp.gmail.com
+      port: 587
+      username: ${GMAIL_USER}
+      password: ${GMAIL_PASS}
+      properties:
+         mail:
+            smtp:
+               auth: true
+               starttls:
+                  enable: true
+               connectiontimeout: 5000
+               timeout: 3000
+               writetimeout: 5000

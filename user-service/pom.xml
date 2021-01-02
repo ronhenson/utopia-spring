@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.smoothstack</groupId>
-    <artifactId>utopia-user-service</artifactId>
+    <artifactId>user-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>uthopia</name>
     <description>Uthopia airline demo project</description>

@@ -4,6 +4,11 @@ import com.smoothstack.orchestrator.dao.UserDao;
 import com.smoothstack.orchestrator.entity.ConfirmationToken;
 import com.smoothstack.orchestrator.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailAuthenticationException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +33,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     EmailSenderService emailSenderService;
 
+    @Autowired
+    JavaMailSender sender;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -47,6 +55,15 @@ public class UserService implements UserDetailsService {
         final User createdUser = userDao.save(user);
         final ConfirmationToken confirmationToken = new ConfirmationToken(user);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
+        try {
+            sendConfirmationMail(user.getEmail(), confirmationToken.getConfirmationToken());
+        } catch (MailAuthenticationException e ) {
+            confirmationTokenService.deleteConfirmationToken(confirmationToken.getId());
+            userDao.deleteById(user.getUserId());
+            System.err.println(e);
+            throw e;
+        }
+
         return createdUser;
     }
 
@@ -57,18 +74,18 @@ public class UserService implements UserDetailsService {
         confirmationTokenService.deleteConfirmationToken(confirmationToken.getId());
     }
 
-//    void sendConfirmationMail(String userMail, String token) {
-//
-//        final SimpleMailMessage mailMessage = new SimpleMailMessage();
-//        mailMessage.setTo(userMail);
-//        mailMessage.setSubject("Mail Confirmation Link!");
-//        mailMessage.setFrom("<MAIL>");
-//        mailMessage.setText(
-//                "Thank you for registering. Please click on the below link to activate your account." + "http://localhost:8085/confirm?token="
-//                        + token);
-//
-//        emailSenderService.sendEmail(mailMessage);
-//    }
+    void sendConfirmationMail(String userMail, String token) {
+
+        final SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(userMail);
+        mailMessage.setSubject("Utopia Mail Confirmation Link!");
+        mailMessage.setFrom("<MAIL>");
+        mailMessage.setText(
+                "Thank you for registering. Please click on the below link to activate your account. " + "http://localhost:8085/auth/confirm?token="
+                        + token);
+
+        emailSenderService.sendEmail(mailMessage);
+    }
 
     public List<User> findAll() {
         return this.userDao.findAll();

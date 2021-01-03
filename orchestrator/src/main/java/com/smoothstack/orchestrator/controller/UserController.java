@@ -50,8 +50,11 @@ public class UserController {
     ResponseEntity<String> confirmMail(@RequestParam("token") String token) {
         System.out.println(token);
         Optional<ConfirmationToken> optionalConfirmationToken = confirmationTokenService.findConfirmationTokenByToken(token);
-        optionalConfirmationToken.ifPresent(userService::confirmUser);
-        return ResponseEntity.status(HttpStatus.OK).body("Email confirmation successfull");
+        if(optionalConfirmationToken.isPresent()) {
+            userService.confirmUser(optionalConfirmationToken.get());
+            return ResponseEntity.status(HttpStatus.OK).body("Email confirmation successfull");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token");
     }
 
 }

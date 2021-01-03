@@ -15,36 +15,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-<<<<<<< Updated upstream
 	@Autowired
 	UserService userService;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userService);
-=======
-	// @Autowired
-	// UserDetailsService userDetailsService;
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		// auth.userDetailsService(userDetailsService);
-		auth.inMemoryAuthentication()
-			.withUser("admin")
-			.password(passwordEncoder().encode("password"))
-			.roles("USER");
->>>>>>> Stashed changes
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-<<<<<<< Updated upstream
 		http.authorizeRequests().antMatchers("/auth/**", "/sign-in/**").permitAll().anyRequest().authenticated().and()
 				.csrf().disable().formLogin().disable().httpBasic().disable().logout().disable();
-=======
-		// allow access to any route after form based authentication
-		http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
->>>>>>> Stashed changes
 	}
 
 	@Autowired

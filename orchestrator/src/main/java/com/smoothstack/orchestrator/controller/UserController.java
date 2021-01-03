@@ -8,6 +8,7 @@ import com.smoothstack.orchestrator.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,12 +45,21 @@ public class UserController {
     }
 
     @GetMapping("/confirm")
-    String confirmMail(@RequestParam("token") String token) {
+    ResponseEntity<String> confirmMail(@RequestParam("token") String token) {
         System.out.println(token);
+<<<<<<< HEAD
         Optional<ConfirmationToken> optionalConfirmationToken = confirmationTokenService
                 .findConfirmationTokenByToken(token);
         optionalConfirmationToken.ifPresent(userService::confirmUser);
         return token;
+=======
+        Optional<ConfirmationToken> optionalConfirmationToken = confirmationTokenService.findConfirmationTokenByToken(token);
+        if(optionalConfirmationToken.isPresent()) {
+            userService.confirmUser(optionalConfirmationToken.get());
+            return ResponseEntity.status(HttpStatus.OK).body("Email confirmation successfull");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token");
+>>>>>>> master
     }
 
 }

@@ -3,23 +3,20 @@ package com.smoothstack.orchestrator.service;
 import com.smoothstack.orchestrator.dao.UserDao;
 import com.smoothstack.orchestrator.entity.ConfirmationToken;
 import com.smoothstack.orchestrator.entity.User;
+import com.smoothstack.orchestrator.exception.EmailNotFoundException;
+import com.smoothstack.orchestrator.exception.InvalidPasswordException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMailMessage;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.stereotype.Service;
-import java.text.MessageFormat;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     @Autowired
     private UserDao userDao;
@@ -36,16 +33,20 @@ public class UserService implements UserDetailsService {
     @Autowired
     JavaMailSender sender;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    @Autowired
+    DaoAuthenticationProvider authenticationProvider;
 
-        final Optional<User> optionalUser = userDao.findByEmail(email);
-
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
+    public void login(String email, String password) {
+        Optional<User> user = userDao.findByEmail(email);
+        if (user.isEmpty()) {
+            throw new EmailNotFoundException(email);
         }
-        else {
-            throw new UsernameNotFoundException(MessageFormat.format("User with email {0} cannot be found.", email));
+
+        String encodedPassword = user.get().getPassword();
+        if (bCryptPasswordEncoder.matches(password, encodedPassword)) {
+            // TODO: return a JWT
+        } else {
+            throw new InvalidPasswordException();
         }
     }
 
@@ -57,7 +58,7 @@ public class UserService implements UserDetailsService {
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         try {
             sendConfirmationMail(user.getEmail(), confirmationToken.getConfirmationToken());
-        } catch (MailAuthenticationException e ) {
+        } catch (MailAuthenticationException e) {
             confirmationTokenService.deleteConfirmationToken(confirmationToken.getId());
             userDao.deleteById(user.getUserId());
             System.err.println(e);
@@ -80,35 +81,9 @@ public class UserService implements UserDetailsService {
         mailMessage.setTo(userMail);
         mailMessage.setSubject("Utopia Mail Confirmation Link!");
         mailMessage.setFrom("<MAIL>");
-        mailMessage.setText(
-                "Thank you for registering. Please click on the below link to activate your account. " + "http://localhost:8085/auth/confirm?token="
-                        + token);
+        mailMessage.setText("Thank you for registering. Please click on the below link to activate your account. "
+                + "http://localhost:8085/auth/confirm?token=" + token);
 
         emailSenderService.sendEmail(mailMessage);
     }
-
-    public List<User> findAll() {
-        return this.userDao.findAll();
-    }
-
-//    public List<User> findByName(String name) {
-//        return userDao.findByName(name);
-//    }
-
-    public Optional<User> findById(long id) {
-        return userDao.findById(id);
-    }
-
-    public void deleteById(long id) {
-        userDao.deleteById(id);
-    }
-
-    public User saveUser(User user) {
-        return userDao.save(user);
-    }
-
-    public boolean userExists(long userId) {
-        return userDao.existsById(userId);
-    }
-
 }

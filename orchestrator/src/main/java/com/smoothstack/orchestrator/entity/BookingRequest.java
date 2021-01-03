@@ -1,4 +1,4 @@
-package com.smoothstack.orchestrator.controller;
+package com.smoothstack.orchestrator.entity;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.smoothstack.orchestrator.controller;
+package com.smoothstack.orchestrator.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

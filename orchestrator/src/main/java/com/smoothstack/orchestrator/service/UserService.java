@@ -16,7 +16,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
-public class UserService {// implements UserDetailsService {
+public class UserService {
 
     @Autowired
     private UserDao userDao;

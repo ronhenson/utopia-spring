@@ -1,4 +1,5 @@
 package com.smoothstack.orchestrator.controller;
+
 import com.smoothstack.orchestrator.entity.ConfirmationToken;
 import com.smoothstack.orchestrator.entity.User;
 import com.smoothstack.orchestrator.service.ConfirmationTokenService;
@@ -8,13 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.dao.EmptyResultDataAccessException;
-import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
 
@@ -28,10 +23,13 @@ public class UserController {
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
-    @GetMapping("/sign-in")
-    String signIn() {
-        //todo jason web token
-        return "sign-in";
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Map<String, String> body) throws Exception {
+        if (!body.containsKey("email") || !body.containsKey("password")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Malformed login JSON");
+        }
+        userService.login(body.get("email"), body.get("password"));
+        return ResponseEntity.ok("Signed in with email `%s`".formatted(body.get("email")));
     }
 
     @PostMapping("/sign-up")
@@ -48,7 +46,8 @@ public class UserController {
     @GetMapping("/confirm")
     String confirmMail(@RequestParam("token") String token) {
         System.out.println(token);
-        Optional<ConfirmationToken> optionalConfirmationToken = confirmationTokenService.findConfirmationTokenByToken(token);
+        Optional<ConfirmationToken> optionalConfirmationToken = confirmationTokenService
+                .findConfirmationTokenByToken(token);
         optionalConfirmationToken.ifPresent(userService::confirmUser);
         return token;
     }

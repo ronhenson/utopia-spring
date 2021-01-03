@@ -15,13 +15,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<User>> findById(@RequestParam(value = "name", required = false) String name,
-                                               @RequestParam(value = "username", required = false) String username,
-                                               @RequestParam(value = "userId", required = false) Long userId,
-                                               @RequestParam(value = "findall", required = false) boolean findAll) {
+            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "userId", required = false) Long userId,
+            @RequestParam(value = "findall", required = false) boolean findAll) {
         List<User> users;
-        if(findAll)
+        if (findAll)
             users = userService.findAll();
         else if (userId != null) {
             Optional<User> userOptional = userService.findById(userId);
@@ -34,15 +34,15 @@ public class UserController {
             users = userService.findByName(name);
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        if(users.isEmpty())
+        if (users.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(users);
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable long id) {
-        Optional<User> users= userService.findById(id);
-        if(!users.isPresent()) {
+        Optional<User> users = userService.findById(id);
+        if (!users.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         return ResponseEntity.status(HttpStatus.OK).body(users.get());
@@ -53,7 +53,8 @@ public class UserController {
         try {
             userService.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Could not delete user with id: " + id + "\n" + e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Could not delete user with id: " + id + "\n" + e);
         }
         return ResponseEntity.status(HttpStatus.OK).body("User with id: " + id.toString() + " deleted successfully");
     }
@@ -65,12 +66,10 @@ public class UserController {
 
     @PutMapping("")
     public ResponseEntity<User> updateUser(@RequestBody User users) {
-        if(userService.userExists(users.getUserId()))
+        if (userService.userExists(users.getUserId()))
             return ResponseEntity.status(HttpStatus.OK).body(userService.saveUser(users));
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
-
-
 
 }

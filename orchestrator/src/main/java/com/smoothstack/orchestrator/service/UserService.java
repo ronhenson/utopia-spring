@@ -10,17 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.stereotype.Service;
-import java.text.MessageFormat;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {// implements UserDetailsService {
 
     @Autowired
     private UserDao userDao;
@@ -37,15 +33,20 @@ public class UserService implements UserDetailsService {
     @Autowired
     JavaMailSender sender;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    @Autowired
+    DaoAuthenticationProvider authenticationProvider;
 
-        final Optional<User> optionalUser = userDao.findByEmail(email);
+    public void login(String email, String password) {
+        Optional<User> user = userDao.findByEmail(email);
+        if (user.isEmpty()) {
+            throw new EmailNotFoundException(email);
+        }
 
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
+        String encodedPassword = user.get().getPassword();
+        if (bCryptPasswordEncoder.matches(password, encodedPassword)) {
+            // TODO: return a JWT
         } else {
-            throw new UsernameNotFoundException(MessageFormat.format("User with email {0} cannot be found.", email));
+            throw new InvalidPasswordException();
         }
     }
 
@@ -85,44 +86,4 @@ public class UserService implements UserDetailsService {
 
         emailSenderService.sendEmail(mailMessage);
     }
-
-    public List<User> findAll() {
-        return this.userDao.findAll();
-    }
-
-    // public List<User> findByName(String name) {
-    // return userDao.findByName(name);
-    // }
-
-    public Optional<User> findById(long id) {
-        return userDao.findById(id);
-    }
-
-    public void deleteById(long id) {
-        userDao.deleteById(id);
-    }
-
-    public User saveUser(User user) {
-        return userDao.save(user);
-    }
-
-    public boolean userExists(long userId) {
-        return userDao.existsById(userId);
-    }
-
-    public void login(String email, String password) throws EmailNotFoundException, InvalidPasswordException {
-        Optional<User> user = userDao.findByEmail(email);
-        if (user.isEmpty()) {
-            throw new EmailNotFoundException(email);
-        }
-
-        String encodedPassword = user.get().getPassword();
-        if (bCryptPasswordEncoder.matches(password, encodedPassword)) {
-            // TODO: return a JWT
-        } else {
-            throw new InvalidPasswordException();
-        }
-
-    }
-
 }

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class EmailNotFoundException extends Exception {
+public class EmailNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

@@ -1,6 +1,5 @@
 package com.smoothstack.orchestrator.entity;
 
-import com.smoothstack.orchestrator.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,12 +9,11 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "CofirmationToken")
+@Entity(name = "ConfirmationToken")
 @Table(name = "tbl_user_signup_token")
 public class ConfirmationToken {
 

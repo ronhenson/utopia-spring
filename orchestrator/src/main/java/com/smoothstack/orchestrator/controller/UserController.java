@@ -23,15 +23,6 @@ public class UserController {
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> body) throws Exception {
-        if (!body.containsKey("email") || !body.containsKey("password")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Malformed login JSON");
-        }
-        userService.login(body.get("email"), body.get("password"));
-        return ResponseEntity.ok("Signed in with email `%s`".formatted(body.get("email")));
-    }
-
     @PostMapping("/sign-up")
     ResponseEntity<Object> signUp(@RequestBody User user) {
         try {

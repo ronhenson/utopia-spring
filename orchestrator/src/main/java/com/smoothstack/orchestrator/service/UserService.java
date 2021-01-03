@@ -36,20 +36,6 @@ public class UserService {
     @Autowired
     DaoAuthenticationProvider authenticationProvider;
 
-    public void login(String email, String password) {
-        Optional<User> user = userDao.findByEmail(email);
-        if (user.isEmpty()) {
-            throw new EmailNotFoundException(email);
-        }
-
-        String encodedPassword = user.get().getPassword();
-        if (bCryptPasswordEncoder.matches(password, encodedPassword)) {
-            // TODO: return a JWT
-        } else {
-            throw new InvalidPasswordException();
-        }
-    }
-
     public User signUpUser(User user) {
         final String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);

@@ -5,7 +5,6 @@ import com.smoothstack.orchestrator.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,15 +31,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authenticationManager());
+		authenticationFilter.setFilterProcessesUrl("/auth/login");
+		JwtAuthorizationFilter authorizationFilter = new JwtAuthorizationFilter(authenticationManager(), userDao);
 		http
 			// we don't need csrf or session state since we are using JWT
 			.csrf().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-			.addFilter(new JwtAuthenticationFilter(authenticationManager()))
-			.addFilter(new JwtAuthorizationFilter(authenticationManager(), userDao))
+			.addFilter(authenticationFilter)
+			.addFilter(authorizationFilter)
 			.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/login").permitAll()
 			.antMatchers("/auth/*").permitAll()
 			.antMatchers("/authenticated").authenticated()
 			.anyRequest().permitAll();

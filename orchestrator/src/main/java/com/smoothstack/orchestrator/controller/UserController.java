@@ -36,7 +36,6 @@ public class UserController {
 
     @GetMapping("/confirm")
     ResponseEntity<String> confirmMail(@RequestParam("token") String token) {
-        System.out.println(token);
         Optional<ConfirmationToken> optionalConfirmationToken = confirmationTokenService
                 .findConfirmationTokenByToken(token);
         if (optionalConfirmationToken.isPresent()) {

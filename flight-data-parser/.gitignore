@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+##Data Dump Files
+flight-data-parser/src/main/resources/flight-data
+

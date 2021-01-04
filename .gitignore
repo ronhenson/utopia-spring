@@ -48,3 +48,4 @@ atlassian-ide-plugin.xml
 
 ##Data Dump Files
 flight-data-parser/src/main/resources/flight-data
+airport-data-parser/src/main/resources/flight-data/

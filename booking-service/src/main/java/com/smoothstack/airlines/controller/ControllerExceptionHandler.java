@@ -38,7 +38,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(JsonProcessingException.class)
 	protected ResponseEntity<Object> handleBadJson(JsonProcessingException ex) {
-		System.out.println("handling bad JSON");
 		return handleExceptionInternal(ex, ex, null, HttpStatus.BAD_REQUEST, null);
 	}
 }

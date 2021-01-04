@@ -3,8 +3,6 @@ package com.smoothstack.orchestrator.service;
 import com.smoothstack.orchestrator.dao.UserDao;
 import com.smoothstack.orchestrator.entity.ConfirmationToken;
 import com.smoothstack.orchestrator.entity.User;
-import com.smoothstack.orchestrator.exception.EmailNotFoundException;
-import com.smoothstack.orchestrator.exception.InvalidPasswordException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
@@ -12,7 +10,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
@@ -35,20 +32,6 @@ public class UserService {
 
     @Autowired
     DaoAuthenticationProvider authenticationProvider;
-
-    public void login(String email, String password) {
-        Optional<User> user = userDao.findByEmail(email);
-        if (user.isEmpty()) {
-            throw new EmailNotFoundException(email);
-        }
-
-        String encodedPassword = user.get().getPassword();
-        if (bCryptPasswordEncoder.matches(password, encodedPassword)) {
-            // TODO: return a JWT
-        } else {
-            throw new InvalidPasswordException();
-        }
-    }
 
     public User signUpUser(User user) {
         final String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());

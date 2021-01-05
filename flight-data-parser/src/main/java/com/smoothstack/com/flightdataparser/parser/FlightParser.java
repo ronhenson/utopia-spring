@@ -6,9 +6,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.util.ResourceUtils;
 
 import java.io.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class FlightParser implements CommandLineRunner {
     @Autowired
@@ -17,9 +17,10 @@ public class FlightParser implements CommandLineRunner {
     private String cleanQuotes(String value) {
         return value.substring(1, value.length() -1);
     }
+
     private LocalDateTime parseDateTime(String dateString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
+        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter).plusYears(2);
         return dateTime;
     }
 
@@ -37,14 +38,18 @@ public class FlightParser implements CommandLineRunner {
     }
 
     private void parse(File file) {
-        try(BufferedReader br = new BufferedReader(new FileReader(file), 536870912)) {
+
+        try(BufferedReader br = new BufferedReader(new FileReader(file), 1048576)) {
             System.out.println(br.readLine());
+            ArrayList<Flight> flightList = new ArrayList<>();
             String line;
             Flight flight;
             while((line = br.readLine()) != null) {
                 flight = parseRow(line.split(","));
-                flightService.createFlight(flight);
+                flightList.add(flight);
+                //System.out.println(flight.getDepartTime().toString());
             }
+            flightService.saveAllFlights(flightList);
         } catch (IOException e) {
             System.err.println(e);
         }

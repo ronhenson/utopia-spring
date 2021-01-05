@@ -5,6 +5,8 @@ import com.smoothstack.com.flightdataparser.parser.entity.Flight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class FlightService {
     @Autowired
@@ -12,5 +14,9 @@ public class FlightService {
 
     public Flight createFlight(Flight flight) {
         return flightDao.save(flight);
+    }
+
+    public void saveAllFlights(ArrayList<Flight> flights) {
+        flightDao.saveAll(flights);
     }
 }

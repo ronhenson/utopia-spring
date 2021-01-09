@@ -1,5 +1,7 @@
 package com.smoothstack.orchestrator.security;
 
+import java.util.List;
+
 import com.smoothstack.orchestrator.dao.UserDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,15 +9,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -37,6 +42,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http
 			// we don't need csrf or session state since we are using JWT
 			.csrf().disable()
+			.cors().configurationSource(request -> {
+					var cors = new CorsConfiguration();
+					cors.setAllowedOriginPatterns(List.of("*"));
+					cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+					cors.setAllowedHeaders(List.of("*"));
+					return cors;
+			}).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.addFilter(authenticationFilter)

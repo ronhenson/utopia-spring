@@ -97,7 +97,7 @@
   CREATE TABLE IF NOT EXISTS `utopia`.`tbl_user_signup_token` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `confirmationToken` VARCHAR(100) NOT NULL,
-    `createdDate` DATE NOT NULL,
+    `createdDate` DATETIME NOT NULL,
     `userId` INT NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `tbl_user_signup_token_confirmationToken_uindex` (`confirmationToken` ASC) ,

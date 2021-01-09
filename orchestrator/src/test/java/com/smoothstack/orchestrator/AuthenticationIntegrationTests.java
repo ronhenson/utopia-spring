@@ -3,8 +3,11 @@ package com.smoothstack.orchestrator;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.Message;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -12,10 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import com.smoothstack.orchestrator.entity.User;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,6 +41,14 @@ public class AuthenticationIntegrationTests {
 
   @Autowired
   ObjectMapper objectMapper;
+
+  @Autowired
+  JavaMailSender emailSender;
+
+  @RegisterExtension
+  static GreenMailExtension greenmail = new GreenMailExtension(ServerSetupTest.SMTP)
+    .withConfiguration(GreenMailConfiguration.aConfig().withUser("username", "password"))
+      .withPerMethodLifecycle(false);
 
   public static String asJsonString(final Object obj) {
     try {
@@ -85,5 +101,27 @@ public class AuthenticationIntegrationTests {
     json.put("badFieldName", "bad");
     mockMvc.perform(post("/auth/sign-up").content(asJsonString(json)).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
+  }
+
+  @DisplayName("sign up with already taken email")
+  @Test
+  @Order(5)
+  void test5() throws Exception {
+    User user = new User("Derek", "Lance", "password", "abc@def.com");
+    mockMvc.perform(post("/auth/sign-up").content(asJsonString(user)).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @DisplayName("confirm test")
+  @Test
+  @Order(6)
+  void test6() throws Exception {
+    User user = new User("Derek", "Lance", "password", "abc@def.com");
+    mockMvc.perform(post("/auth/sign-up").content(asJsonString(user)).contentType(MediaType.APPLICATION_JSON));
+    Message[] messages = greenmail.getReceivedMessages();
+    String emailMessage = GreenMailUtil.getBody(messages[0]);
+    Integer urlStart = emailMessage.indexOf("http://");
+    String confirmLink = emailMessage.substring(urlStart);
+    mockMvc.perform(get(confirmLink)).andExpect(status().isOk());
   }
 }

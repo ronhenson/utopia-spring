@@ -26,19 +26,9 @@ public class Flight {
     private double price;
 
     @NonNull
-    private String departCityId;
-
-    @NonNull
-    private String arriveCityId;
-
-    @NonNull
     private LocalDateTime arrivalTime;
 
     @NonNull
     private String flightNumber;
 
-    @Override
-    public String toString() {
-        return "flight num: %s\tDeparture: %s\t Arrival: %s\t Departure Time: %s".formatted(flightNumber, departCityId, arriveCityId, departTime.toString());
-    }
 }

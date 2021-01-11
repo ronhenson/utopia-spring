@@ -23,30 +23,30 @@ public class BookingService {
 
 	@Autowired
 	BookingDao bookingDao;
+
 	@Autowired
 	FlightDao flightDao;
+
 	@Autowired
 	TravelerDao travelerDao;
+
 	@Autowired
 	BookingsHasTravelersDao bookingsHasTravelersDao;
 
-	public List<Booking> getBookingsByTraveler(Integer travelerId) throws ResourceNotFoundException {
-		Optional<Traveler> traveler = travelerDao.findById(travelerId);
-		if (traveler.isEmpty()) {
-			throw new ResourceNotFoundException(travelerId, ResourceType.TRAVELER);
+	public Booking getBookingById(Long bookingId) throws ResourceNotFoundException {
+		Optional<Booking> booking = bookingDao.findById(bookingId);
+		if (booking.isEmpty()) {
+			throw new ResourceNotFoundException(bookingId.intValue(), ResourceType.BOOKING);
 		}
-
-		Set<Integer> bookingIds = bookingsHasTravelersDao.findByTravelerId(travelerId).stream()
-				.map(result -> result.getBookingId()).collect(Collectors.toSet());
-		return bookingDao.findAllById(bookingIds);
+		return booking.get();
 	}
 
 	@Transactional
 	public Booking createBooking(Booking booking, Integer flightId, List<Integer> travelerIds)
 			throws ResourceExistsException, ResourceNotFoundException {
-		Booking dbBooking = bookingDao.findByBookingId(booking.getBookingId());
-		if (dbBooking != null) {
-			throw new ResourceExistsException(booking.getBookingId(), ResourceType.BOOKING);
+		Optional<Booking> dbBooking = bookingDao.findById(booking.getBookingId().longValue());
+		if (dbBooking.isPresent()) {
+			throw new ResourceExistsException(booking.getBookingId().intValue(), ResourceType.BOOKING);
 		}
 
 		Optional<Flight> flight = flightDao.findById(flightId);
@@ -70,24 +70,24 @@ public class BookingService {
 	}
 
 	public void updateBooking(Booking booking) throws ResourceNotFoundException {
-		Booking dbBooking = bookingDao.findByBookingId(booking.getBookingId());
-		if (dbBooking == null) {
-			throw new ResourceNotFoundException(booking.getBookingId(), ResourceType.BOOKING);
+		Optional<Booking> dbBooking = bookingDao.findById(booking.getBookingId().longValue());
+		if (dbBooking.isEmpty()) {
+			throw new ResourceNotFoundException(booking.getBookingId().intValue(), ResourceType.BOOKING);
 		}
-
-		dbBooking.setIsActive(booking.getIsActive());
-		dbBooking.setStripeId(booking.getStripeId());
-		dbBooking.setBookerId(booking.getBookerId());
-		bookingDao.save(dbBooking);
+		Booking bookingToUpdate = dbBooking.get();
+		bookingToUpdate.setIsActive(booking.getIsActive());
+		bookingToUpdate.setStripeId(booking.getStripeId());
+		bookingToUpdate.setBookerId(booking.getBookerId());
+		bookingDao.save(bookingToUpdate);
 	}
 
 	@Transactional
 	public void deleteBooking(Integer bookingId) throws ResourceNotFoundException {
-		Booking dbBooking = bookingDao.findByBookingId(bookingId);
-		if (dbBooking == null) {
+		Optional<Booking> dbBooking = bookingDao.findById(bookingId.longValue());
+		if (dbBooking.isEmpty()) {
 			throw new ResourceNotFoundException(bookingId, ResourceType.BOOKING);
 		}
-		bookingDao.delete(dbBooking);
+		bookingDao.delete(dbBooking.get());
 	}
 
 	public List<Booking> getAllBookings() {

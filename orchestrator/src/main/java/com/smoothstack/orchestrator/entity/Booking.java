@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Booking {
 
-	private Integer bookingId;
+	private Long bookingId;
 
 	@NonNull
 	private Boolean isActive;

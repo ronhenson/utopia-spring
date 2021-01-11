@@ -11,10 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smoothstack.orchestrator.entity.LoginCredentials;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +39,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         LoginCredentials credentials = null;
         try {
             credentials = new ObjectMapper().readValue(request.getInputStream(), LoginCredentials.class);
-        } catch (Exception ex) {
+        } catch (JsonParseException | JsonMappingException ex) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            return null;
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 
@@ -53,7 +59,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Authentication authResult) throws IOException, ServletException {
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
 
-        String token = JWT.create().withSubject(userDetails.getUsername())
+        String token = JWT.create().withSubject(userDetails.getUserId().toString())
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
 

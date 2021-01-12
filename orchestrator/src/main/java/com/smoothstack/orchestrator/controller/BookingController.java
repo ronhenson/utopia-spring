@@ -50,13 +50,15 @@ public class BookingController {
 	}
 
 	@PutMapping
-	public ResponseEntity<Booking> updateBooking(@RequestBody Booking booking) {
-		RequestEntity<Booking> request = RequestEntity.put(URL).accept(MediaType.APPLICATION_JSON).body(booking);
+	public ResponseEntity<Booking> updateBooking(@RequestBody Booking booking, Authentication auth) {
+		System.out.println("booking " + booking.getBookerId());
+		RequestEntity<Booking> request = RequestEntity.put(URL + "/" + booking.getBookingId())//.header("user-id", auth.getPrincipal().toString())
+			.accept(MediaType.APPLICATION_JSON).body(booking);
 		return restTemplate.exchange(request, Booking.class);
 	}
 	
 	@DeleteMapping("/{bookingId}")
-	public ResponseEntity<String> deleteBooking(@PathVariable Integer bookingId) {
+	public ResponseEntity<String> deleteBooking(@PathVariable Integer bookingId, Authentication auth) {
 		RequestEntity<Void> request = RequestEntity.delete("%s/%d".formatted(URL, bookingId)).accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, String.class);
 	}

@@ -52,7 +52,7 @@ public class BookingController {
 	@PutMapping
 	public ResponseEntity<Booking> updateBooking(@RequestBody Booking booking, Authentication auth) {
 		System.out.println("booking " + booking.getBookerId());
-		RequestEntity<Booking> request = RequestEntity.put(URL + "/" + booking.getBookingId())//.header("user-id", auth.getPrincipal().toString())
+		RequestEntity<Booking> request = RequestEntity.put(URL).header("user-id", auth.getPrincipal().toString())
 			.accept(MediaType.APPLICATION_JSON).body(booking);
 		return restTemplate.exchange(request, Booking.class);
 	}

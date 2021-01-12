@@ -58,16 +58,16 @@ public class BookingController {
 	@PutMapping
 	public ResponseEntity<Booking> updateBooking(@RequestHeader("user-id") Long userId,
 			@RequestBody Booking booking) throws ResourceNotFoundException {
-		// Booking booked = bookingService.getBookingById(booking.getBookingId().longValue());
+		Booking booked = bookingService.getBookingById(booking.getBookingId().longValue());
 				System.out.println("hello");
-		//System.out.println("In booking airline controller " + booking.getBookerId().longValue() + "  userId " + userId + " booked.bookerId " + booked);
+		System.out.println("In booking airline controller " + booking.getBookerId().longValue() + "  userId " + userId + " booked.bookerId " + booked);
 
-		// if (booked.getBookerId().longValue() == userId) {
-		// 	bookingService.updateBooking(booking);
-		// 	return ResponseEntity.ok(booking);
-		// } else {
+		if (booked.getBookerId().longValue() == userId) {
+			bookingService.updateBooking(booking);
+			return ResponseEntity.ok(booking);
+		} else {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//		}
+		}
 	}
 
 	@DeleteMapping("/{bookingId}")

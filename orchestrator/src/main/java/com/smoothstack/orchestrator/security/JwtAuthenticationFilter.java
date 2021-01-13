@@ -64,6 +64,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
 
         response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-        response.getWriter().printf("{ \"token\" : \"%s\" }", token);
+        response.getWriter().printf("{ \"token\" : \"%s\", \"firstName\" : \"%s\", \"lastName\" : \"%s\" }",
+            token, userDetails.getFirstName(), userDetails.getLastName());
     }
 }

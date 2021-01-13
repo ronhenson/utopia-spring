@@ -29,6 +29,14 @@ public class UserDetailsImpl implements UserDetails {
         return Collections.singletonList(simpleGrantedAuthority);
     }
 
+    public String getFirstName() {
+        return user.getFirstName();
+    }
+
+    public String getLastName() {
+        return user.getLastName();
+    }
+
     public Long getUserId() {
         return user.getUserId();
     }

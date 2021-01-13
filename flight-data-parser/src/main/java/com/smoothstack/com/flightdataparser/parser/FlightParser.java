@@ -83,7 +83,7 @@ public class FlightParser implements CommandLineRunner {
         try {
             file = ResourceUtils.getFile("classpath:flight-data/ONTIME_REPORTING_CLEAN.csv");
             System.out.println(file);
-            createSqlDumpFIle(file);
+            parse(file);
         } catch (FileNotFoundException e) {
             System.out.println("no flight data in resources directory");
         }

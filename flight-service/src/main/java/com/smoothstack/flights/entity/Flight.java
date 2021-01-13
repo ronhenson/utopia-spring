@@ -1,11 +1,7 @@
 package com.smoothstack.flights.entity;
 
 import lombok.*;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -30,13 +26,12 @@ public class Flight {
     @NonNull
     private double price;
 
-    @NonNull
-    String departCityId;
-
-    @NonNull
-    private String arriveCityId;
 
     @NonNull
     private String flightNumber;
+
+    @ManyToOne()
+    @JoinColumn(name="flightNumber", referencedColumnName = "flightNumber", insertable = false, updatable = false)
+    private FlightDetails flightDetails;
 
 }

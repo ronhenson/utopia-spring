@@ -17,6 +17,10 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL5Dialect
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
   jackson:
     deserialization:
       fail-on-unknown-properties: true

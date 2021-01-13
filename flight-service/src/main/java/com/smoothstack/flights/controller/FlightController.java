@@ -1,18 +1,35 @@
 package com.smoothstack.flights.controller;
 
+import com.smoothstack.flights.entity.Flight;
+import com.smoothstack.flights.entity.FlightDetails;
+import com.smoothstack.flights.entity.MultiHopFlight;
+import com.smoothstack.flights.service.FlightDetailsService;
+import com.smoothstack.flights.service.FlightService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
-@RequestMapping("/flights/{origin}/{dest}")
+@RequestMapping("/flights")
 public class FlightController {
-    @GetMapping()
-    public ResponseEntity<String> getAllFlights(@PathVariable String origin, @PathVariable String dest) {
+    @Autowired
+    FlightService flightService;
+    @Autowired
+    FlightDetailsService flightDetailsService;
 
-        return ResponseEntity.status(HttpStatus.OK).body(origin + dest);
+    @GetMapping("/multihop")
+    public ResponseEntity<List<MultiHopFlight>> getMultiHopFlts(@RequestParam(value="origin") String origin, @RequestParam(value="dest") String dest, @RequestParam(name = "date") String date) {
+        List<MultiHopFlight> flights = flightService.findByMultiHop(origin, dest, date);
+        return ResponseEntity.status(HttpStatus.OK).body(flights);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<MultiHopFlight>> getNonstopFlights(@RequestParam(value="origin") String origin, @RequestParam(value="dest") String dest, @RequestParam(name = "date") String date) {
+        List<MultiHopFlight> flights = flightService.findByMultiHop(origin, dest, date);
+        return ResponseEntity.status(HttpStatus.OK).body(flights);
     }
 }

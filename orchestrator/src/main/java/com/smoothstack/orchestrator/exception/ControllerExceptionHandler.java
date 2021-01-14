@@ -29,7 +29,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	protected ResponseEntity<Object> handleConflict(DataIntegrityViolationException ex) {
-		return handleExceptionInternal(ex, "Check JSON syntax Data IntegrityViolation", null,
+		return handleExceptionInternal(ex, "Check JSON syntax Data Integrity Violation", null,
 				HttpStatus.BAD_REQUEST, null);
 	}
 

@@ -53,7 +53,7 @@ public class FlightParser implements CommandLineRunner {
         }
     }
 
-    private void createSqlDumpFIle(File inputFile) {
+    private void createSqlDumpFile(File inputFile) {
         try(BufferedReader br = new BufferedReader(new FileReader(inputFile), 1048576)) {
             System.out.println(br.readLine());
             File outputFile = new File("/home/arun/code/smoothstackjava/Spring-Boot-API/flight-data-parser/src/main/resources/flight-data/flight_dump.sql");//ResourceUtils.getFile("classpath:flight-data/flight_dump.sql");

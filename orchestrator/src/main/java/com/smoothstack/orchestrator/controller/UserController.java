@@ -2,6 +2,7 @@ package com.smoothstack.orchestrator.controller;
 
 import com.smoothstack.orchestrator.entity.ConfirmationToken;
 import com.smoothstack.orchestrator.entity.User;
+import com.smoothstack.orchestrator.exception.EmailNotFoundException;
 import com.smoothstack.orchestrator.service.ConfirmationTokenService;
 import com.smoothstack.orchestrator.service.UserService;
 
@@ -26,7 +27,15 @@ public class UserController {
 
     @PostMapping("/sign-up")
     ResponseEntity<Object> signUp(@RequestBody User user) {
-        userService.signUpUser(user);
+        try {
+            userService.signUpUser(user);
+        } catch (DataIntegrityViolationException e) {
+            System.err.println(e);
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Data integrity violation check JASON syntax");
+        } catch (EmailNotFoundException e) {
+            System.err.println(e);
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with email " + user.getEmail() + " already exists!");
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 

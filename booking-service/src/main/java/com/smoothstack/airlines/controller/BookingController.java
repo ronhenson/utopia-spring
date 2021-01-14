@@ -38,7 +38,6 @@ public class BookingController {
 			@RequestHeader("user-id") Long userId,
 			@RequestHeader("user-role") String userRole) 
 			throws ResourceNotFoundException {
-		System.out.println("role " + userRole);
 		Booking booking = bookingService.getBookingById(bookingId.longValue());
 		if (booking.getBookerId().longValue() == userId || userRole.equals("EMPLOYEE")) {
 			return ResponseEntity.ok(booking);
@@ -50,7 +49,6 @@ public class BookingController {
 	@GetMapping
 	public ResponseEntity<List<Booking>> getBookings(@RequestHeader("user-id") Integer userId,
 			@RequestHeader("user-role") String userRole) {
-			System.out.println("inside getBookings role " + userRole);
 		if (userRole.equals("EMPLOYEE")) {
 			return ResponseEntity.ok(bookingService.getAllBookings());
 		} else if (userRole.equals("USER")) {
@@ -61,15 +59,12 @@ public class BookingController {
 
 	}
 
-
 	@PostMapping("/flight/{flightId}")
 	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest request, @PathVariable Long flightId,
 			@RequestHeader("user-id") Long userId,
 			@RequestHeader("user-role") String userRole)
-			throws ResourceExistsException, ResourceNotFoundException, URISyntaxException {
+		throws ResourceExistsException, ResourceNotFoundException, URISyntaxException {
 		Booking booking = request.getBooking();
-		System.out.println("Inside Post Airlines booking " + booking);
-
 		bookingService.createBooking(booking, flightId, request.getTravelerIds());
 		return ResponseEntity.created(new URI("/booking/" + booking.getBookingId())).body(booking);
 	}
@@ -80,9 +75,6 @@ public class BookingController {
 			@RequestHeader("user-role") String userRole,
 			@RequestBody Booking booking) throws ResourceNotFoundException {
 		Booking booked = bookingService.getBookingById(booking.getBookingId().longValue());
-
-		System.out.println("In booking airline controller " + booking.getBookerId().longValue() + "  userId " + userId + " booked.bookerId " + booked);
-
 		if (booked.getBookerId().longValue() == userId || userRole.equals("EMPLOYEE")) {
 			bookingService.updateBooking(booking);
 			return ResponseEntity.ok(booking);

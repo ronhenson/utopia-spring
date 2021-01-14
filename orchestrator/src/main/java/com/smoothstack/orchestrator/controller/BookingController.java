@@ -27,12 +27,12 @@ public class BookingController {
 	RestTemplate restTemplate;
 
 	private final String URL = "http://booking-service/booking";
-	
 	@GetMapping("/{bookingId}")
 	public ResponseEntity<Booking> getBookingById(@PathVariable Integer bookingId, Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
-		System.out.println("userRole " + userRole + " SecurityUtils " + SecurityUtils.getRole(auth) + " auth.getP " + auth.getPrincipal());
-		RequestEntity<Void> request = RequestEntity.get(URL + "/" + bookingId).header("user-id", auth.getPrincipal().toString()).header( "user-role", userRole)
+		RequestEntity<Void> request = RequestEntity.get(URL + "/" + bookingId)
+				.header("user-id", auth.getPrincipal().toString())
+				.header( "user-role", userRole)
 				.accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, Booking.class);
 	}
@@ -40,23 +40,20 @@ public class BookingController {
 	@GetMapping
 	public ResponseEntity<Booking[]> getAllBookings(Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
-		System.out.println("userRole " + userRole + " SecurityUtils " + SecurityUtils.getRole(auth) + " auth.getP " + auth.getPrincipal());
-
-		RequestEntity<Void> request = RequestEntity.get(URL).header("user-id", auth.getPrincipal().toString())
-			.header( "user-role", userRole).accept(MediaType.APPLICATION_JSON).build();
+		RequestEntity<Void> request = RequestEntity.get(URL)
+				.header("user-id", auth.getPrincipal().toString())
+				.header("user-role", userRole)
+				.accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, Booking[].class);
 	}
 
 	@PostMapping("/flight/{flightId}")
 	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest body, @PathVariable Long flightId, Authentication auth) {
-		System.out.println("Hello");
 		String userRole = SecurityUtils.getRole(auth);
-		// System.out.println("inside Post flightId " + flightId + " user-id " + auth.getPrincipal() + " userRole " + userRole);
 		RequestEntity<BookingRequest> request = RequestEntity.post("%s/flight/%d".formatted(URL, flightId))
-				.header("user-id", auth.getPrincipal().toString()).header( "user-role", userRole)
+				.header("user-id", auth.getPrincipal().toString())
+				.header( "user-role", userRole)
 				.accept(MediaType.APPLICATION_JSON).body(body);
-				System.out.println("Helloagain");
-
 		return restTemplate.exchange(request, Booking.class);
 	}
 
@@ -64,8 +61,10 @@ public class BookingController {
 	public ResponseEntity<Booking> updateBooking(@RequestBody Booking booking, Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
 		System.out.println("booking " + booking.getBookerId());
-		RequestEntity<Booking> request = RequestEntity.put(URL).header("user-id", auth.getPrincipal().toString()).header( "user-role", userRole)
-			.accept(MediaType.APPLICATION_JSON).body(booking);
+		RequestEntity<Booking> request = RequestEntity.put(URL)
+				.header("user-id", auth.getPrincipal().toString())
+				.header( "user-role", userRole)
+				.accept(MediaType.APPLICATION_JSON).body(booking);
 		return restTemplate.exchange(request, Booking.class);
 	}
 	
@@ -73,8 +72,9 @@ public class BookingController {
 	public ResponseEntity<String> deleteBooking(@PathVariable Integer bookingId, Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
 		RequestEntity<Void> request = RequestEntity.delete("%s/%d".formatted(URL, bookingId))
-			.header("user-id", auth.getPrincipal().toString()).header( "user-role", userRole)
-			.accept(MediaType.APPLICATION_JSON).build();
+				.header("user-id", auth.getPrincipal().toString())
+				.header( "user-role", userRole)
+				.accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, String.class);
 	}
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.smoothstack.orchestrator.entity.Booking;
 import com.smoothstack.orchestrator.entity.BookingRequest;
+import com.smoothstack.orchestrator.security.SecurityUtils;
 
 @RestController
 @RequestMapping("/booking")
@@ -26,15 +28,16 @@ public class BookingController {
 
 	private final String URL = "http://booking-service/booking";
 	
-	@GetMapping("/traveler/{travelerId}")
-	public ResponseEntity<Booking[]> getAllBookings(@PathVariable Integer travelerId) {
-		RequestEntity<Void> request = RequestEntity.get("%s/traveler/%d".formatted(URL, travelerId))
+	@GetMapping("/{bookingId}")
+	public ResponseEntity<Booking> getBookingById(@PathVariable Integer bookingId, Authentication auth) {
+		RequestEntity<Void> request = RequestEntity.get(URL + "/" + bookingId).header("user-id", auth.getPrincipal().toString())
 				.accept(MediaType.APPLICATION_JSON).build();
-		return restTemplate.exchange(request, Booking[].class);
+		return restTemplate.exchange(request, Booking.class);
 	}
 
 	@GetMapping
-	public ResponseEntity<Booking[]> getAllBookings() {
+	public ResponseEntity<Booking[]> getAllBookings(Authentication auth) {
+		System.out.println("role " + SecurityUtils.getRole(auth));
 		RequestEntity<Void> request = RequestEntity.get(URL).accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, Booking[].class);
 	}

@@ -38,7 +38,7 @@ public class Booking {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer bookingId;
+	private Long bookingId;
 
 	@NonNull
 	private Boolean isActive;

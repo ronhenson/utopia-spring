@@ -3,8 +3,12 @@ package com.smoothstack.orchestrator;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.Message;
+
+import static org.hamcrest.Matchers.containsString;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -12,15 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import com.smoothstack.orchestrator.entity.User;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-// import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
@@ -32,11 +40,19 @@ public class AuthenticationIntegrationTests {
   MockMvc mockMvc;
 
   @Autowired
-  ObjectMapper objectMapper;
+  ObjectMapper mapper;
 
-  public static String asJsonString(final Object obj) {
+  @Autowired
+  JavaMailSender emailSender;
+
+  @RegisterExtension
+  static GreenMailExtension greenmail = new GreenMailExtension(ServerSetupTest.SMTP)
+    .withConfiguration(GreenMailConfiguration.aConfig().withUser("username", "password"))
+      .withPerMethodLifecycle(false);
+
+  public String asJsonString(final Object obj) {
     try {
-      final ObjectMapper mapper = new ObjectMapper();
+      // final ObjectMapper mapper = new ObjectMapper();
       final String jsonContent = mapper.writeValueAsString(obj);
       System.out.println(jsonContent);
       return jsonContent;
@@ -85,5 +101,80 @@ public class AuthenticationIntegrationTests {
     json.put("badFieldName", "bad");
     mockMvc.perform(post("/auth/sign-up").content(asJsonString(json)).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
+  }
+
+  @DisplayName("sign up with already taken email")
+  @Test
+  @Order(5)
+  void test5() throws Exception {
+    User user = new User("Derek", "Lance", "password", "abc@def.com");
+    mockMvc.perform(post("/auth/sign-up").content(asJsonString(user)).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @DisplayName("confirm an account")
+  @Test
+  @Order(6)
+  void test6() throws Exception {
+    User user = new User("Derek", "Lance", "password", "abc6@def.com");
+    mockMvc.perform(post("/auth/sign-up").content(asJsonString(user)).contentType(MediaType.APPLICATION_JSON));
+    Message[] messages = greenmail.getReceivedMessages();
+    String emailMessage = GreenMailUtil.getBody(messages[messages.length - 1]);
+    Integer tokenStart = emailMessage.indexOf("?token=");
+    String token = emailMessage.substring(tokenStart);
+    mockMvc.perform(get("/auth/confirm" + token)).andExpect(status().isOk());
+    mockMvc.perform(get("/auth/confirm" + token)).andExpect(status().isBadRequest());
+  }
+
+  @DisplayName("login with unconfirmed account")
+  @Test
+  @Order(7)
+  void test7() throws Exception {
+    Map<String, String> credentials = new HashMap<>();
+    credentials.put("email", "not@confirmed.com");
+    credentials.put("password", "pass");
+    mockMvc.perform(post("/auth/login")
+      .content(asJsonString(credentials))
+      .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(status().isUnauthorized());
+  }
+
+  @DisplayName("login normally with a confirmed account")
+  @Test
+  @Order(9)
+  void test9() throws Exception {
+    Map<String, String> credentials = new HashMap<>();
+    credentials.put("email", "abc6@def.com");
+    credentials.put("password", "password");
+    mockMvc.perform(post("/auth/login")
+      .content(asJsonString(credentials))
+      .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(content().string(containsString("token")));
+  }
+
+  @DisplayName("login with a confirmed account, bad credentials")
+  @Test
+  @Order(10)
+  void test10() throws Exception {
+    Map<String, String> credentials = new HashMap<>();
+    credentials.put("email", "abc6@def.com");
+    credentials.put("password", "password1");
+    mockMvc.perform(post("/auth/login").content(asJsonString(credentials)).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized());
+  }
+  
+  @DisplayName("login with a confirmed account, too many fields")
+  @Test
+  @Order(11)
+  void test11() throws Exception {
+    Map<String, String> credentials = new HashMap<>();
+    credentials.put("email", "abc6@def.com");
+    credentials.put("password", "password1");
+    credentials.put("bad", "field");
+    mockMvc.perform(post("/auth/login")
+      .content(asJsonString(credentials))
+      .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(status().isBadRequest());
   }
 }

@@ -28,8 +28,8 @@ public class FlightController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<MultiHopFlight>> getNonstopFlights(@RequestParam(value="origin") String origin, @RequestParam(value="dest") String dest, @RequestParam(name = "date") String date) {
-        List<MultiHopFlight> flights = flightService.findByMultiHop(origin, dest, date);
+    public ResponseEntity<List<Flight>> getNonstopFlights(@RequestParam(value="origin") String origin, @RequestParam(value="dest") String dest, @RequestParam(name = "date") String date) {
+        List<Flight> flights = flightService.findFlights(origin, dest, date);
         return ResponseEntity.status(HttpStatus.OK).body(flights);
     }
 }

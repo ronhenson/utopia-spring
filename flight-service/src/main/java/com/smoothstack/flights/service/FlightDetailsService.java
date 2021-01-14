@@ -23,5 +23,8 @@ public class FlightDetailsService {
         return flightDetailsDao.findByArriveCityIdAndDepartCityIdIn(dest, HUBS);
     }
 
+    public List<FlightDetails> findByOriginDest(String origin, String dest) {
+        return flightDetailsDao.findByArriveCityIdAndDepartCityId(origin, dest);
+    }
 
 }

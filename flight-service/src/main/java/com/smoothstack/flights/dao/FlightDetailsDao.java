@@ -12,9 +12,8 @@ import java.util.List;
 @Repository
 public interface FlightDetailsDao extends JpaRepository<FlightDetails, Long> {
 
-//    @Query("select tb from FlightDetails tb where tb.departCityId=?1 and tb.arriveCityId in ?2")
     List<FlightDetails> findByDepartCityIdAndArriveCityIdIn(String departId, List<String> hubs);
-//    @Query("select tb from FlightDetails tb where tb.arriveCityId=?1 and tb.departCityId in ?2")
     List<FlightDetails> findByArriveCityIdAndDepartCityIdIn(String arriveId, List<String> hubs);
+    List<FlightDetails>findByArriveCityIdAndDepartCityId(String arriveId, String departCityId);
 
 }

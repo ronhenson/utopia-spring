@@ -6,8 +6,6 @@ import com.smoothstack.flights.entity.FlightDetails;
 import com.smoothstack.flights.entity.MultiHopFlight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.net.PortUnreachableException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -60,10 +58,13 @@ public class FlightService {
         return matchConnectingFlights(leg1, leg2); //iterates thru leg1 and leg2 and creates list of MultiHop objs with flights that much the required connection criteria;
     }
 
+    //direct non stop flights
     public List<Flight> findFlights(String origin, String dest, String date) {
         LocalDateTime start = getFormattedDate(date, true); //takes departure date string and returns date time for beginning of departure day.
         LocalDateTime end = getFormattedDate(date, false); // takes departure date string and returns date time for end of departure day.
-        return null;
+        List<FlightDetails> flightDetails = flightDetailsService.findByOriginDest(origin, dest);
+        List<String> fltNums = flightDetails.parallelStream().map(fltD -> fltD.getFlightNumber()).collect(Collectors.toList());
+        return flightDao.findByFlightNumberInAndDepartTimeBetween(fltNums, start, end);
     }
 
 

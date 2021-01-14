@@ -12,6 +12,5 @@ import java.util.List;
 
 @Repository
 public interface FlightDao extends JpaRepository<Flight, Long> {
-
     List<Flight> findByFlightNumberInAndDepartTimeBetween(List<String> flightNums, LocalDateTime start, LocalDateTime end);
 }

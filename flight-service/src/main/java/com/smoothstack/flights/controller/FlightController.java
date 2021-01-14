@@ -1,7 +1,6 @@
 package com.smoothstack.flights.controller;
 
 import com.smoothstack.flights.entity.Flight;
-import com.smoothstack.flights.entity.FlightDetails;
 import com.smoothstack.flights.entity.MultiHopFlight;
 import com.smoothstack.flights.service.FlightDetailsService;
 import com.smoothstack.flights.service.FlightService;
@@ -9,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController

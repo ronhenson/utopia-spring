@@ -26,12 +26,7 @@ public class UserController {
 
     @PostMapping("/sign-up")
     ResponseEntity<Object> signUp(@RequestBody User user) {
-        try {
-            userService.signUpUser(user);
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email Already Exists");
-        }
-
+        userService.signUpUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 

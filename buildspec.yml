@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: jdk15
+  build:
+    commands:
+      - cd airport-data-parser
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - mvn package -Dmaven.test.skip=true
+artifacts:
+  secondary-artifacts:
+    artifact1:
+      base-directory:
+
+  files:
+    - target/my-app-1.0-SNAPSHOT.jar
+    - appspec.yml
+  discard-paths: yes

@@ -27,37 +27,54 @@ public class BookingController {
 	RestTemplate restTemplate;
 
 	private final String URL = "http://booking-service/booking";
-	
 	@GetMapping("/{bookingId}")
 	public ResponseEntity<Booking> getBookingById(@PathVariable Integer bookingId, Authentication auth) {
-		RequestEntity<Void> request = RequestEntity.get(URL + "/" + bookingId).header("user-id", auth.getPrincipal().toString())
+		String userRole = SecurityUtils.getRole(auth);
+		RequestEntity<Void> request = RequestEntity.get(URL + "/" + bookingId)
+				.header("user-id", auth.getPrincipal().toString())
+				.header( "user-role", userRole)
 				.accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, Booking.class);
 	}
 
 	@GetMapping
 	public ResponseEntity<Booking[]> getAllBookings(Authentication auth) {
-		System.out.println("role " + SecurityUtils.getRole(auth));
-		RequestEntity<Void> request = RequestEntity.get(URL).accept(MediaType.APPLICATION_JSON).build();
+		String userRole = SecurityUtils.getRole(auth);
+		RequestEntity<Void> request = RequestEntity.get(URL)
+				.header("user-id", auth.getPrincipal().toString())
+				.header("user-role", userRole)
+				.accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, Booking[].class);
 	}
 
 	@PostMapping("/flight/{flightId}")
-	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest body, @PathVariable Integer flightId) {
+	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest body, @PathVariable Long flightId, Authentication auth) {
+		String userRole = SecurityUtils.getRole(auth);
 		RequestEntity<BookingRequest> request = RequestEntity.post("%s/flight/%d".formatted(URL, flightId))
+				.header("user-id", auth.getPrincipal().toString())
+				.header( "user-role", userRole)
 				.accept(MediaType.APPLICATION_JSON).body(body);
 		return restTemplate.exchange(request, Booking.class);
 	}
 
 	@PutMapping
-	public ResponseEntity<Booking> updateBooking(@RequestBody Booking booking) {
-		RequestEntity<Booking> request = RequestEntity.put(URL).accept(MediaType.APPLICATION_JSON).body(booking);
+	public ResponseEntity<Booking> updateBooking(@RequestBody Booking booking, Authentication auth) {
+		String userRole = SecurityUtils.getRole(auth);
+		System.out.println("booking " + booking.getBookerId());
+		RequestEntity<Booking> request = RequestEntity.put(URL)
+				.header("user-id", auth.getPrincipal().toString())
+				.header( "user-role", userRole)
+				.accept(MediaType.APPLICATION_JSON).body(booking);
 		return restTemplate.exchange(request, Booking.class);
 	}
 	
 	@DeleteMapping("/{bookingId}")
-	public ResponseEntity<String> deleteBooking(@PathVariable Integer bookingId) {
-		RequestEntity<Void> request = RequestEntity.delete("%s/%d".formatted(URL, bookingId)).accept(MediaType.APPLICATION_JSON).build();
+	public ResponseEntity<String> deleteBooking(@PathVariable Integer bookingId, Authentication auth) {
+		String userRole = SecurityUtils.getRole(auth);
+		RequestEntity<Void> request = RequestEntity.delete("%s/%d".formatted(URL, bookingId))
+				.header("user-id", auth.getPrincipal().toString())
+				.header( "user-role", userRole)
+				.accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, String.class);
 	}
 }

@@ -42,16 +42,13 @@ public class BookingService {
 	}
 
 	@Transactional
-	public Booking createBooking(Booking booking, Integer flightId, List<Integer> travelerIds)
+	public Booking createBooking(Booking booking, Long flightId, List<Integer> travelerIds)
 			throws ResourceExistsException, ResourceNotFoundException {
-		Optional<Booking> dbBooking = bookingDao.findById(booking.getBookingId().longValue());
-		if (dbBooking.isPresent()) {
-			throw new ResourceExistsException(booking.getBookingId().intValue(), ResourceType.BOOKING);
-		}
+		
 
 		Optional<Flight> flight = flightDao.findById(flightId);
 		if (flight.isEmpty()) {
-			throw new ResourceNotFoundException(flightId, ResourceType.FLIGHT);
+			throw new ResourceNotFoundException(flightId.intValue(), ResourceType.FLIGHT);
 		}
 
 		if (travelerIds != null) {
@@ -92,5 +89,10 @@ public class BookingService {
 
 	public List<Booking> getAllBookings() {
 		return bookingDao.findAll();
+	}
+
+	public List<Booking> getByUserId(Integer userId) {
+		return bookingDao.findByBookerId(userId);
+
 	}
 }

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.smoothstack.airlines.entity.Flight;
 
 @Repository
-public interface FlightDao extends JpaRepository<Flight, Integer> {
-	Flight findByFlightId(Integer flightId);
+public interface FlightDao extends JpaRepository<Flight, Long> {
+	Flight findByFlightId(Long flightId);
 }

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.smoothstack.orchestrator.dao.UserDao;
 import com.smoothstack.orchestrator.entity.User;
 
@@ -49,25 +50,27 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return null;
         }
 
-        String email = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
-            .build()
-            .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
-            .getSubject();
-            
-        if (email == null) {
+        try {
+            String userId = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
+                .build()
+                .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
+                    .getSubject();
+
+            Long id = Long.parseLong(userId);
+
+            Optional<User> user = userDao.findById(id);
+
+            if (user.isEmpty()) {
+                return null;
+            }
+
+            UserDetailsImpl userDetails = new UserDetailsImpl(user.get());
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(id, null,
+                    userDetails.getAuthorities());
+            return auth;
+        } catch (JWTVerificationException | NumberFormatException ex) {
             return null;
         }
-
-        Optional<User> user = userDao.findByEmail(email);
-
-        if (user.isEmpty()) {
-            return null;
-        }
-
-        UserDetailsImpl userDetails = new UserDetailsImpl(user.get());
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email, null,
-                userDetails.getAuthorities());
-        return auth;
     }
     
 }

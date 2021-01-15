@@ -1,6 +1,9 @@
 package com.smoothstack.orchestrator.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
+
+import com.auth0.jwt.exceptions.JWTVerificationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,5 +40,9 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleConflict(DuplicateEmailException ex) {
 		return handleExceptionInternal(ex, "Duplicate email user already exists", null,
 				HttpStatus.BAD_REQUEST, null);
+
+	@ExceptionHandler(JWTVerificationException.class)
+	protected ResponseEntity<Object> handleConflict(JWTVerificationException ex) {
+		return handleExceptionInternal(ex, null, null, HttpStatus.UNAUTHORIZED, null);
 	}
 }

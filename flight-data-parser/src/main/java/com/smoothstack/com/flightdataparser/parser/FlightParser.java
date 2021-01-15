@@ -31,8 +31,6 @@ public class FlightParser implements CommandLineRunner {
         flight.setDepartTime(parseDateTime(row[4] + " " + cleanQuotes(row[10])));
         flight.setPrice(price > 50 ? price : 50);
         flight.setSeatsAvailable(150);
-        flight.setDepartCityId(cleanQuotes(row[8]));
-        flight.setArriveCityId(cleanQuotes(row[9]));
         flight.setFlightNumber(cleanQuotes(row[7]));
         return flight;
     }
@@ -50,6 +48,30 @@ public class FlightParser implements CommandLineRunner {
                 //System.out.println(flight.getDepartTime().toString());
             }
             flightService.saveAllFlights(flightList);
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+    }
+
+    private void createSqlDumpFile(File inputFile) {
+        try(BufferedReader br = new BufferedReader(new FileReader(inputFile), 1048576)) {
+            System.out.println(br.readLine());
+            File outputFile = new File("/home/arun/code/smoothstackjava/Spring-Boot-API/flight-data-parser/src/main/resources/flight-data/flight_dump.sql");//ResourceUtils.getFile("classpath:flight-data/flight_dump.sql");
+            FileWriter fileWriter = new FileWriter(outputFile, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            final String INSERT_STMNT = "INSERT INTO tbl_flight(departTime, seatsAvailable, price, arrivalTime, flightNumber) VALUES('%s', %d, %f, '%s', '%s');";
+            String line;
+            Flight flight;
+            System.out.println("Output file: " + outputFile.getAbsolutePath());
+            while((line = br.readLine()) != null) {
+                flight = parseRow(line.split(","));
+                String formattedInsert = String.format(INSERT_STMNT, flight.getDepartTime().toString(), flight.getSeatsAvailable(), flight.getPrice(), flight.getArrivalTime().toString(), flight.getFlightNumber());
+                //System.out.println(formattedInsert);
+                bufferedWriter.write(formattedInsert);
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+            bufferedWriter.close();
         } catch (IOException e) {
             System.err.println(e);
         }

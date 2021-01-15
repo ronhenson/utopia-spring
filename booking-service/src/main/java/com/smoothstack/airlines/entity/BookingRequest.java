@@ -21,26 +21,21 @@ public class BookingRequest {
 	@NonNull
 	private String stripeId;
 
-	@NonNull
-	private Integer bookerId;
-
 	private List<Integer> travelerIds = new ArrayList<>();
 
 	@JsonIgnore
 	public Booking getBooking() {
-		return new Booking(isActive, stripeId, bookerId);
+		return new Booking(isActive, stripeId);
 	}
 	
 	public BookingRequest(Booking booking) {
 		isActive = booking.getIsActive();
 		stripeId = booking.getStripeId();
-		bookerId = booking.getBookerId();
 	}
 	
 	public BookingRequest(Booking booking, List<Integer> travelerIds) {
 		isActive = booking.getIsActive();
 		stripeId = booking.getStripeId();
-		bookerId = booking.getBookerId();
 		this.travelerIds = travelerIds;
 	}
 }

@@ -46,7 +46,6 @@ public class Booking {
 	@NonNull
 	private String stripeId;
 
-	@NonNull
 	private Integer bookerId;
 
 	@JsonIgnore

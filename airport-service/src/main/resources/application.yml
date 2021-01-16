@@ -8,6 +8,8 @@ spring:
       url: jdbc:mysql://smoothstack-project.cqxybfmjssty.us-east-2.rds.amazonaws.com:3306/utopia
       username: ${SPRING_DB_UNAME}
       password: ${SPRING_DB_PASS}
+      hikari:
+         maximum-pool-size: 3
       
 #spring:
 #   datasource:
@@ -20,3 +22,4 @@ spring:
          naming:
             physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       open-in-view: true
+      database-platform: org.hibernate.dialect.MySQL5Dialect

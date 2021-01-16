@@ -40,6 +40,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleConflict(DuplicateEmailException ex) {
 		return handleExceptionInternal(ex, "Duplicate email user already exists", null,
 				HttpStatus.BAD_REQUEST, null);
+	}
 
 	@ExceptionHandler(JWTVerificationException.class)
 	protected ResponseEntity<Object> handleConflict(JWTVerificationException ex) {

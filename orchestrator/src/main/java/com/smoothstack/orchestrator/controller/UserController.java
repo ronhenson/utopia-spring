@@ -1,11 +1,13 @@
 package com.smoothstack.orchestrator.controller;
 
+import com.smoothstack.orchestrator.entity.AuthResponse;
 import com.smoothstack.orchestrator.entity.ConfirmationToken;
 import com.smoothstack.orchestrator.entity.User;
 import com.smoothstack.orchestrator.exception.EmailNotFoundException;
 import com.smoothstack.orchestrator.service.ConfirmationTokenService;
 import com.smoothstack.orchestrator.service.UserService;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -21,33 +23,43 @@ public class UserController {
 
     @Autowired
     UserService userService;
-
     @Autowired
     private ConfirmationTokenService confirmationTokenService;
 
     @PostMapping("/sign-up")
     ResponseEntity<Object> signUp(@RequestBody User user) {
+        AuthResponse response = new AuthResponse();
         try {
             userService.signUpUser(user);
         } catch (DataIntegrityViolationException e) {
             System.err.println(e);
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Data integrity violation check JASON syntax");
+            response.setMsg("Data integrity violation check JASON syntax");
+            response.setDataIntegrityError(true);
+            response.setSuccess(false);
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (EmailNotFoundException e) {
             System.err.println(e);
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with email " + user.getEmail() + " already exists!");
+            response.setMsg("User with email " + user.getEmail() + " already exists!");
+            response.setEmailIsDuplicate(true);
+            response.setSuccess(false);
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        response.setSuccess(true);
+        response.setMsg("Account created confirm by email");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/confirm")
-    ResponseEntity<String> confirmMail(@RequestParam("token") String token) {
+    @GetMapping("/confirm/{token}")
+    ResponseEntity<AuthResponse> confirmMail(@PathVariable("token") String token) {
         Optional<ConfirmationToken> optionalConfirmationToken = confirmationTokenService
                 .findConfirmationTokenByToken(token);
+        AuthResponse response = new AuthResponse();
+        response.setSuccess(true);
         if (optionalConfirmationToken.isPresent()) {
             userService.confirmUser(optionalConfirmationToken.get());
-            return ResponseEntity.status(HttpStatus.OK).body("Email confirmation successful");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
 }

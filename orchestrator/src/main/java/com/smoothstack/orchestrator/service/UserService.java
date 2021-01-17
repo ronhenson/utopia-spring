@@ -72,4 +72,8 @@ public class UserService {
 
         emailSenderService.sendEmail(mailMessage);
     }
+
+    public boolean userExists(String email) {
+        return userDao.existsByEmail(email);
+    }
 }

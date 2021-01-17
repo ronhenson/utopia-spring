@@ -7,7 +7,6 @@ import com.smoothstack.orchestrator.exception.EmailNotFoundException;
 import com.smoothstack.orchestrator.service.ConfirmationTokenService;
 import com.smoothstack.orchestrator.service.UserService;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -33,7 +32,7 @@ public class UserController {
             userService.signUpUser(user);
         } catch (DataIntegrityViolationException e) {
             System.err.println(e);
-            response.setMsg("Data integrity violation check JASON syntax");
+            response.setMsg("Data integrity violation check JSON syntax");
             response.setDataIntegrityError(true);
             response.setSuccess(false);
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -60,6 +59,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @GetMapping("/check-email/{email}")
+    ResponseEntity<AuthResponse> checkIfMailExists(@PathVariable("email") String email) {
+        AuthResponse response = new AuthResponse();
+        response.setSuccess(true);
+        response.setEmailIsDuplicate(userService.userExists(email));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

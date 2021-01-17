@@ -1,4 +1,4 @@
-package com.smoothstack.orchestrator;
+package com.smoothstack.orchestrator.integration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
 @AutoConfigureMockMvc
-@TestPropertySource(locations="classpath:test.properties")
-public class AuthenticationIntegrationTests {
+@TestPropertySource(locations = { "classpath:h2-database.properties", "classpath:mail-server.properties" })
+public class AuthenticationTests {
 
   @Autowired
   MockMvc mockMvc;
@@ -52,7 +52,6 @@ public class AuthenticationIntegrationTests {
 
   public String asJsonString(final Object obj) {
     try {
-      // final ObjectMapper mapper = new ObjectMapper();
       final String jsonContent = mapper.writeValueAsString(obj);
       System.out.println(jsonContent);
       return jsonContent;

@@ -65,6 +65,15 @@
     CONSTRAINT `fk_tbl_bookings_has_tbl_traveler_tbl_bookings1` FOREIGN KEY (`bookingId`) REFERENCES `utopia`.`tbl_booking` (`bookingId`),
     CONSTRAINT `fk_tbl_bookings_has_tbl_traveler_tbl_traveler1` FOREIGN KEY (`travelerId`) REFERENCES `utopia`.`tbl_traveler` (`travelerId`)
   );
+  -- -----------------------------------------------------
+-- Table `utopia`.`tbl_flight_details`
+-- -----------------------------------------------------
+  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_flight_details` (
+    `flightNumber` VARCHAR(4) NOT NULL,
+    `departCityId` VARCHAR(4) NULL DEFAULT NULL,
+    `arriveCityId` VARCHAR(4) NULL DEFAULT NULL,
+    PRIMARY KEY (`flightNumber`)
+  );
 -- -----------------------------------------------------
   -- Table `utopia`.`tbl_flight`
   -- -----------------------------------------------------
@@ -73,13 +82,10 @@
     `departTime` DATETIME NOT NULL,
     `seatsAvailable` INT NOT NULL,
     `price` DECIMAL(13, 2) NOT NULL,
-    `departCityId` VARCHAR(4) NOT NULL,
-    `arriveCityId` VARCHAR(4) NOT NULL,
-    `flightNumber` VARCHAR(4) NOT NULL,
     `arrivalTime` DATETIME NOT NULL,
+    `flightNumber` VARCHAR(4) NULL DEFAULT NULL,
     PRIMARY KEY (`flightId`),
-    CONSTRAINT `fk_tbl_flights_tbl_airport1` FOREIGN KEY (`departCityId`) REFERENCES `utopia`.`tbl_airport` (`iataIdent`),
-    CONSTRAINT `fk_tbl_flights_tbl_airport2` FOREIGN KEY (`arriveCityId`) REFERENCES `utopia`.`tbl_airport` (`iataIdent`)
+    CONSTRAINT `tbl_flight_tbl_flight_details_flightNumber_fk` FOREIGN KEY (`flightNumber`) REFERENCES `utopia`.`tbl_flight_details` (`flightNumber`)
   );
 -- -----------------------------------------------------
   -- Table `utopia`.`tbl_flight_has_bookings`
@@ -103,3 +109,11 @@
     UNIQUE INDEX `tbl_user_signup_token_confirmationToken_uindex` (`confirmationToken` ASC) ,
     CONSTRAINT `tbl_user_signup_token_tbl_users_userId_fk` FOREIGN KEY (`userId`) REFERENCES `utopia`.`tbl_users` (`userId`)
   );
+-- -----------------------------------------------------
+-- Table `utopia`.`tbl_roles`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `utopia`.`tbl_roles` (
+  `userRole` INT NOT NULL,
+  `roleName` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`userRole`)
+)

@@ -4,6 +4,7 @@ import com.smoothstack.orchestrator.dao.UserDao;
 import com.smoothstack.orchestrator.entity.ConfirmationToken;
 import com.smoothstack.orchestrator.entity.User;
 
+import com.smoothstack.orchestrator.exception.DuplicateEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
@@ -36,6 +37,8 @@ public class UserService {
     public User signUpUser(User user) {
         final String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
+        if(userDao.existsByEmail(user.getEmail()))
+            throw new DuplicateEmailException(user.getEmail());
         final User createdUser = userDao.save(user);
         final ConfirmationToken confirmationToken = new ConfirmationToken(user);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
@@ -64,8 +67,8 @@ public class UserService {
         mailMessage.setTo(userMail);
         mailMessage.setSubject("Utopia Mail Confirmation Link!");
         mailMessage.setFrom("<MAIL>");
-        mailMessage.setText("Thank you for registering. Please click on the below link to activate your account. "
-                + "http://localhost:8085/auth/confirm?token=" + token);
+        mailMessage.setText("Thank you for registering. Please click on the below link to activate your account.\n"
+                + "http://localhost:4200/signup/" + token);
 
         emailSenderService.sendEmail(mailMessage);
     }

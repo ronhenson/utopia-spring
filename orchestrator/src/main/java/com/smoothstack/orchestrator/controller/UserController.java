@@ -7,7 +7,6 @@ import com.smoothstack.orchestrator.exception.EmailNotFoundException;
 import com.smoothstack.orchestrator.service.ConfirmationTokenService;
 import com.smoothstack.orchestrator.service.UserService;
 
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

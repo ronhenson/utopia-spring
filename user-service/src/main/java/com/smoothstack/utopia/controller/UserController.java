@@ -15,8 +15,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<User>> findById(
+    @GetMapping("")
+    public ResponseEntity<List<User>> adminUserSearch(
             @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "firstName", required = false) String firstName,
             @RequestParam(value = "lastName", required = false) String lastName,

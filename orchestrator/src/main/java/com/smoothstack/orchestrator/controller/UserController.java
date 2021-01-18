@@ -1,72 +1,76 @@
 package com.smoothstack.orchestrator.controller;
 
-import com.smoothstack.orchestrator.entity.AuthResponse;
-import com.smoothstack.orchestrator.entity.ConfirmationToken;
 import com.smoothstack.orchestrator.entity.User;
-import com.smoothstack.orchestrator.exception.EmailNotFoundException;
-import com.smoothstack.orchestrator.service.ConfirmationTokenService;
-import com.smoothstack.orchestrator.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/users")
 @CrossOrigin
 public class UserController {
 
     @Autowired
-    UserService userService;
-    @Autowired
-    private ConfirmationTokenService confirmationTokenService;
+    RestTemplate restTemplate;
 
-    @PostMapping("/sign-up")
-    ResponseEntity<Object> signUp(@RequestBody User user) {
-        AuthResponse response = new AuthResponse();
-        try {
-            userService.signUpUser(user);
-        } catch (DataIntegrityViolationException e) {
-            System.err.println(e);
-            response.setMsg("Data integrity violation check JSON syntax");
-            response.setDataIntegrityError(true);
-            response.setSuccess(false);
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        } catch (EmailNotFoundException e) {
-            System.err.println(e);
-            response.setMsg("User with email " + user.getEmail() + " already exists!");
-            response.setEmailIsDuplicate(true);
-            response.setSuccess(false);
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-        response.setSuccess(true);
-        response.setMsg("Account created confirm by email");
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    private final String URL = "http://user-service/users";
+
+    @GetMapping("/admin/search")
+    ResponseEntity<User[]> adminUserSearch (
+    @RequestParam(value = "email", required = false) String email,
+    @RequestParam(value = "firstName", required = false) String firstName,
+    @RequestParam(value = "lastName", required = false) String lastName,
+    @RequestParam(value = "userId", required = false) Long userId,
+    @RequestParam(value = "findall", required = false) boolean findAll) {
+        String searchString = URL + "?";
+        if (findAll)
+            searchString += "findall=true";
+        else if (userId != null) {
+            searchString += "userId=" + userId;
+        } else if (email != null) {
+            searchString += "email=" + email;
+        } else if (firstName != null && lastName != null)
+            searchString += "firstName=" + firstName + "?lastName=" + lastName;
+        else if(firstName != null)
+            searchString += "firstName=" + firstName;
+        else if(lastName != null)
+            searchString += "lastName=" + lastName;
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        System.out.println();
+        RequestEntity<Void> request = RequestEntity.get(searchString)
+                .accept(MediaType.APPLICATION_JSON).build();
+        return restTemplate.exchange(request, User[].class);
     }
 
-    @GetMapping("/confirm/{token}")
-    ResponseEntity<AuthResponse> confirmMail(@PathVariable("token") String token) {
-        Optional<ConfirmationToken> optionalConfirmationToken = confirmationTokenService
-                .findConfirmationTokenByToken(token);
-        AuthResponse response = new AuthResponse();
-        response.setSuccess(true);
-        if (optionalConfirmationToken.isPresent()) {
-            userService.confirmUser(optionalConfirmationToken.get());
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    @GetMapping("/{id}")
+    public ResponseEntity<User> findById(@PathVariable long id) {
+        RequestEntity<Void> request = RequestEntity.get(URL + "/" + id)
+                .accept(MediaType.APPLICATION_JSON).build();;
+        return restTemplate.exchange(request, User.class);
     }
 
-    @GetMapping("/check-email/{email}")
-    ResponseEntity<AuthResponse> checkIfMailExists(@PathVariable("email") String email) {
-        AuthResponse response = new AuthResponse();
-        response.setSuccess(true);
-        response.setEmailIsDuplicate(userService.userExists(email));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        RequestEntity<Void> request = RequestEntity.get(URL + "/" + id)
+                .accept(MediaType.APPLICATION_JSON).build();;
+        return restTemplate.exchange(request, String.class);
     }
+
+    @PutMapping("")
+    public ResponseEntity<String> updateUser(@RequestBody User users) {
+        RequestEntity<User> request = RequestEntity.put(URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(users);
+        return restTemplate.exchange(request, String.class);
+    }
+
 
 }

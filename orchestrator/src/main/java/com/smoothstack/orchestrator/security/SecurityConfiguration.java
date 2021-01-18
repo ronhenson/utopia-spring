@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.smoothstack.orchestrator.dao.UserDao;
 
+import com.smoothstack.orchestrator.entity.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +49,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 					cors.setAllowedHeaders(List.of("*"));
 					return cors;
-			}).and()
+			})
+			.and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.addFilter(authenticationFilter)
@@ -58,6 +60,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/authenticated").authenticated()
 			.antMatchers("/booking").authenticated()
 			.antMatchers("/booking/{bookingId}").authenticated()
+			.antMatchers("/users/*").authenticated()
+			.antMatchers("/users/admin/search").hasRole(UserRole.ADMIN.name())
 			.anyRequest().permitAll();
 	}
 

@@ -65,6 +65,7 @@ public class BookingController {
 			@RequestHeader("user-role") String userRole)
 		throws ResourceExistsException, ResourceNotFoundException, URISyntaxException {
 		Booking booking = request.getBooking();
+		booking.setBookerId(userId.intValue());
 		bookingService.createBooking(booking, flightId, request.getTravelerIds());
 		return ResponseEntity.created(new URI("/booking/" + booking.getBookingId())).body(booking);
 	}

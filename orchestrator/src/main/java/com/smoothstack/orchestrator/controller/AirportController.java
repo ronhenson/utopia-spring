@@ -34,8 +34,9 @@ public class AirportController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Airport[]> findByCity(@RequestParam(value = "city", defaultValue = "") String city) {
-		RequestEntity<Void> request = RequestEntity.get("%s?city=%s".formatted(URL, city))
+	public ResponseEntity<Airport[]> findByCity(@RequestParam(value = "city", defaultValue = "") String city,
+			@RequestParam(required = false) String query) {
+		RequestEntity<Void> request = RequestEntity.get("%s?city=%s&query=%s".formatted(URL, city, query))
 				.accept(MediaType.APPLICATION_JSON).build();
 		return restTemplate.exchange(request, Airport[].class);
 	}

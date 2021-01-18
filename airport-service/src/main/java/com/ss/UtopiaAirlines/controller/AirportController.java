@@ -50,10 +50,14 @@ public class AirportController {
 	
 	
 	@GetMapping
-	public List<Airport> findByCity(@RequestParam( value = "city", defaultValue = "") String cityAirport,  HttpServletResponse response) {
+	public List<Airport> findByCity(@RequestParam(required = false) String query, @RequestParam(value = "city", required = false) String cityAirport,
+			HttpServletResponse response) {
+		if (query != null) {
+			return airportService.search(query);
+		}
 		
 		try {
-			if ( cityAirport.length() == 0) {
+			if (cityAirport != null) {
 				return airportService.getAllAirports();
 			}
 

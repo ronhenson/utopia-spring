@@ -60,7 +60,6 @@ public class BookingController {
 	@PutMapping
 	public ResponseEntity<Booking> updateBooking(@RequestBody Booking booking, Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
-		System.out.println("booking " + booking.getBookerId());
 		RequestEntity<Booking> request = RequestEntity.put(URL)
 				.header("user-id", auth.getPrincipal().toString())
 				.header( "user-role", userRole)

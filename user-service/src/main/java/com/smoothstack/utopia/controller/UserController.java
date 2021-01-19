@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("/users")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<User>> findById(@RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "username", required = false) String username,
+    @GetMapping("")
+    public ResponseEntity<List<User>> adminUserSearch(
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "firstName", required = false) String firstName,
+            @RequestParam(value = "lastName", required = false) String lastName,
             @RequestParam(value = "userId", required = false) Long userId,
             @RequestParam(value = "findall", required = false) boolean findAll) {
         List<User> users;
@@ -26,15 +28,18 @@ public class UserController {
         else if (userId != null) {
             Optional<User> userOptional = userService.findById(userId);
             users = userOptional.isPresent() ? new ArrayList<>(Arrays.asList(userOptional.get())) : null;
-        } else if (username != null && name != null)
-            users = userService.findByNameAndUsername(name, username);
-        else if (username != null)
-            users = userService.findByUsername(username);
-        else if (name != null)
-            users = userService.findByName(name);
+        } else if (email != null) {
+            Optional<User> userOptional = userService.findByEmail(email);
+            users = userOptional.isPresent() ? new ArrayList<>(Arrays.asList(userOptional.get())) : null;
+        } else if (firstName != null && lastName != null)
+            users = userService.findByFirstNameAndLastName(firstName, lastName);
+        else if(firstName != null)
+            users = userService.findByFirstName(firstName);
+        else if(lastName != null)
+            users = userService.findByLastName(lastName);
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        if (users.isEmpty())
+        if (users == null || users.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(users);
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
@@ -59,14 +64,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User with id: " + id.toString() + " deleted successfully");
     }
 
-    @PostMapping("")
-    public ResponseEntity<User> addUser(@RequestBody User users) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(users));
-    }
 
     @PutMapping("")
     public ResponseEntity<User> updateUser(@RequestBody User users) {
-        if (userService.userExists(users.getUserId()))
+        if (userService.userExists(users.getEmail()))
             return ResponseEntity.status(HttpStatus.OK).body(userService.saveUser(users));
         else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

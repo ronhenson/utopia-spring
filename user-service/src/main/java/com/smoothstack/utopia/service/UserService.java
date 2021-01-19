@@ -3,7 +3,6 @@ package com.smoothstack.utopia.service;
 import com.smoothstack.utopia.dao.UserDao;
 import com.smoothstack.utopia.entity.User;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -19,32 +18,36 @@ public class UserService {
         return this.userDao.findAll();
     }
 
-    public List<User> findByNameAndUsername(String name, String username) {
-        return userDao.findByNameAndUsername(name, username);
+    public List<User> findByFirstNameAndLastName(String firstName, String lastName) {
+        return userDao.findByFirstNameAndLastName(firstName, lastName);
     }
 
-    public List<User> findByName(String name) {
-        return userDao.findByName(name);
+    public List<User> findByFirstName(String firstName) {
+        return userDao.findByFirstName(firstName);
     }
 
-    public List<User> findByUsername(String username) {
-        return userDao.findByUsername(username);
-    }
-
-    public Optional<User> findById(long id) {
-        return userDao.findById(id);
-    }
-
-    public void deleteById(long id) {
-        userDao.deleteById(id);
+    public List<User> findByLastName(String lastName) {
+        return userDao.findByLastName(lastName);
     }
 
     public User saveUser(User user) {
         return userDao.save(user);
     }
 
-    public boolean userExists(long userId) {
-        return userDao.existsById(userId);
+    public Optional<User> findByEmail(String email) {
+        return userDao.findByEmail(email);
+    }
+
+    public Optional<User> findById(Long id) {
+        return userDao.findByUserId(id);
+    }
+
+    public void deleteById(long id) {
+        userDao.deleteById(id);
+    }
+
+    public boolean userExists(String email) {
+        return userDao.existsByEmail(email);
     }
 
 }

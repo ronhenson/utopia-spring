@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.smoothstack.orchestrator.entity.User;
-import com.smoothstack.orchestrator.entity.UserRole;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,11 +20,9 @@ public class UserDetailsImpl implements UserDetails {
     @NonNull
     User user;
 
-    UserRole userRole = UserRole.USER;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(userRole.name());
+        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(user.getUserRole().name());
         return Collections.singletonList(simpleGrantedAuthority);
     }
 

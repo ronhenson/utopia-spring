@@ -57,7 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.addFilter(authorizationFilter)
 			.authorizeRequests()
 			.antMatchers("/auth/*").permitAll()
-			.antMatchers("/authenticated").authenticated()
+			.antMatchers("/getRole").authenticated()
 			.antMatchers("/booking").authenticated()
 			.antMatchers("/booking/{bookingId}").authenticated()
 			.antMatchers("/users/*").authenticated()

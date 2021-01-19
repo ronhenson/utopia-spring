@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 @Setter
 @Builder
@@ -30,12 +32,15 @@ public class User {
     @NonNull
     private String email;
 
+    @JsonIgnore
     @Builder.Default
     private UserRole userRole = UserRole.USER;
 
+    @JsonIgnore
     @Builder.Default
     private Boolean locked = false;
 
+    @JsonIgnore
     @Builder.Default
     private Boolean enabled = false;
 }

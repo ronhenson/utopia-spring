@@ -34,13 +34,13 @@ public class AuthController {
             response.setMsg("Data integrity violation check JSON syntax");
             response.setDataIntegrityError(true);
             response.setSuccess(false);
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (EmailNotFoundException e) {
             System.err.println(e);
             response.setMsg("User with email " + user.getEmail() + " already exists!");
             response.setEmailIsDuplicate(true);
             response.setSuccess(false);
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         response.setSuccess(true);
         response.setMsg("Account created confirm by email");

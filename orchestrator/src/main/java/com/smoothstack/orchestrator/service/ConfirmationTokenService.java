@@ -25,4 +25,8 @@ public class ConfirmationTokenService {
         return confirmationTokenDao.findByConfirmationToken(token);
     }
 
+    public Optional<ConfirmationToken> findConfirmationTokenByUserId(long id) {
+        return confirmationTokenDao.findByUserUserId(id);
+    }
+
 }

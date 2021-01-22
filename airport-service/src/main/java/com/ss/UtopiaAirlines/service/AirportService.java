@@ -32,6 +32,10 @@ public class AirportService {
 		public List<Airport> getAllAirports() {
 			return airportDao.findAll();
 		}
+
+		public List<Airport> search(String query) {
+			return airportDao.search(query);
+		}
 		
 		public List<Airport> findByCity(String cityName) throws ResourceDoesNotExistsException {
 			if (cityName == null) {

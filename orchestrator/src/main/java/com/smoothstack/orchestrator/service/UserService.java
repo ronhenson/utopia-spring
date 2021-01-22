@@ -67,9 +67,13 @@ public class UserService {
         mailMessage.setTo(userMail);
         mailMessage.setSubject("Utopia Mail Confirmation Link!");
         mailMessage.setFrom("<MAIL>");
-        mailMessage.setText("Thank you for registering. Please click on the below link to activate your account. "
-                + "http://localhost:8085/auth/confirm?token=" + token);
+        mailMessage.setText("Thank you for registering. Please click on the below link to activate your account.\n"
+                + "http://localhost:4200/signup/" + token);
 
         emailSenderService.sendEmail(mailMessage);
+    }
+
+    public boolean userExists(String email) {
+        return userDao.existsByEmail(email);
     }
 }

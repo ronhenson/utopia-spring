@@ -8,16 +8,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.util.ResourceUtils;
 import com.opencsv.CSVReader;
 import java.io.*;
-import java.util.Arrays;
 
 public class AirportParser implements CommandLineRunner {
 
-    private static final byte QUOTE = 34;
     @Autowired
     AirportService airportService;
-    private String cleanQuotes(String value) {
-        return value.substring(1, value.length() -1);
-    }
 
     private void parse(File file) {
         try(CSVReader reader = new CSVReader(new FileReader(file))) {

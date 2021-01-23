@@ -62,7 +62,7 @@ public class BookingService {
 			}).collect(Collectors.toSet());
 			booking.setTravelers(travelers);
 		}
-		booking.setFlight(flight.get());
+		booking.setFlights(List.of(flight.get()));
 		return bookingDao.save(booking);
 	}
 

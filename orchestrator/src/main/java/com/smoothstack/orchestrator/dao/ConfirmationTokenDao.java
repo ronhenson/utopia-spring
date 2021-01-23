@@ -1,7 +1,6 @@
 package com.smoothstack.orchestrator.dao;
 
 import com.smoothstack.orchestrator.entity.ConfirmationToken;
-import com.smoothstack.orchestrator.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

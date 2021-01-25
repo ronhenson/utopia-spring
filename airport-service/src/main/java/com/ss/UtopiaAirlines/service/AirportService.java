@@ -67,4 +67,8 @@ public class AirportService {
 				throw new ResourceDoesNotExistsException();
 			}
 		}
+
+		public List<Airport> getAirportList(List<String> airportIds) {
+			return airportDao.findAllById(airportIds);
+		}
 }

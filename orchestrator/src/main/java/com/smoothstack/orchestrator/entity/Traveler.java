@@ -1,25 +1,20 @@
-package com.smoothstack.booking.entity;
+package com.smoothstack.orchestrator.entity;
 
 import java.sql.Timestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-
-@Data
-@Entity
-@Table(name = "tbl_traveler")
-@NoArgsConstructor
+@Getter
+@Setter
 @RequiredArgsConstructor
+@NoArgsConstructor
 public class Traveler {
-	
-	@Id private Integer travelerId;
+
+  @NonNull private Integer travelerId;
 	
 	@NonNull private String name;
 	

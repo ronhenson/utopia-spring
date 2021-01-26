@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 import com.smoothstack.orchestrator.entity.Airport;
 
 @RestController
@@ -31,6 +33,13 @@ public class AirportController {
 		RequestEntity<Void> request = RequestEntity.get(URL + "/" + airportId).accept(MediaType.APPLICATION_JSON)
 				.build();
 		return restTemplate.exchange(request, Airport.class);
+	}
+
+	@PostMapping("/list")
+	public ResponseEntity<Airport[]> getAirportList(@RequestBody List<String> airportIds) {
+		RequestEntity<List<String>> request = RequestEntity.post(URL + "/list").accept(MediaType.APPLICATION_JSON)
+				.body(airportIds);
+		return restTemplate.exchange(request, Airport[].class);
 	}
 
 	@GetMapping

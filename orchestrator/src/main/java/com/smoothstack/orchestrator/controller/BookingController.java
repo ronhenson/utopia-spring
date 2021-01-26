@@ -1,6 +1,7 @@
 package com.smoothstack.orchestrator.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -50,8 +51,10 @@ public class BookingController {
 	@PostMapping("/flight/{flightId}")
 	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest body, @PathVariable Long flightId, Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
+		System.out.println("body" + body.getStripeId());
 		RequestEntity<BookingRequest> request = RequestEntity.post("%s/flight/%d".formatted(URL, flightId))
 				.header("user-id", auth.getPrincipal().toString())
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
 				.header( "user-role", userRole)
 				.accept(MediaType.APPLICATION_JSON).body(body);
 		return restTemplate.exchange(request, Booking.class);
@@ -62,7 +65,8 @@ public class BookingController {
 		String userRole = SecurityUtils.getRole(auth);
 		RequestEntity<Booking> request = RequestEntity.put(URL)
 				.header("user-id", auth.getPrincipal().toString())
-				.header( "user-role", userRole)
+				.header("user-role", userRole)
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
 				.accept(MediaType.APPLICATION_JSON).body(booking);
 		return restTemplate.exchange(request, Booking.class);
 	}

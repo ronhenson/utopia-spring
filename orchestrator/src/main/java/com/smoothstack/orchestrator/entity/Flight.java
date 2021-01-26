@@ -21,10 +21,10 @@ public class Flight {
     private LocalDateTime arrivalTime;
 
     @NonNull
-    private int seatsAvailable;
+    private Integer seatsAvailable;
 
     @NonNull
-    private double price;
+    private Double price;
 
 
     @NonNull

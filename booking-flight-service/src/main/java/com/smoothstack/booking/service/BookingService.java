@@ -93,6 +93,13 @@ public class BookingService {
 
 	public List<Booking> getByUserId(Integer userId) {
 		return bookingDao.findByBookerId(userId);
+	}
 
+	public Booking userOwnsBooking(Integer userId, Integer bookingId) {
+		Optional<Booking> booking = bookingDao.findById(bookingId.longValue());
+		if (booking.isEmpty()) {
+			return null;
+		}
+		return booking.get().getBookerId() == userId ? booking.get() : null;
 	}
 }

@@ -3,6 +3,8 @@ package com.smoothstack.booking.entity;
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -19,7 +21,9 @@ import lombok.NoArgsConstructor;
 @RequiredArgsConstructor
 public class Traveler {
 	
-	@Id private Integer travelerId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer travelerId;
 	
 	@NonNull private String name;
 	

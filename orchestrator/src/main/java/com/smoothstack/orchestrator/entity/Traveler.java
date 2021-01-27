@@ -2,19 +2,15 @@ package com.smoothstack.orchestrator.entity;
 
 import java.sql.Timestamp;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
+@Data
 @NoArgsConstructor
 public class Traveler {
 
-  @NonNull private Integer travelerId;
+  private Integer travelerId;
 	
 	@NonNull private String name;
 	

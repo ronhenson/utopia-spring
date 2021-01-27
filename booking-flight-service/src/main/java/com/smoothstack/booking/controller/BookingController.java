@@ -84,14 +84,14 @@ public class BookingController {
 	}
 
 	@DeleteMapping("/{bookingId}")
-	public ResponseEntity<String> deleteBooking(@PathVariable Integer bookingId, 
+	public ResponseEntity<Void> deleteBooking(@PathVariable Integer bookingId, 
 			@RequestHeader("user-id") Long userId,
 			@RequestHeader("user-role") String userRole)
 			throws ResourceNotFoundException {
 		Booking booking = bookingService.getBookingById(bookingId.longValue());
 		if (booking.getBookerId().longValue() == userId || userRole.equals("EMPLOYEE")) {
 			bookingService.deleteBooking(bookingId);
-			return ResponseEntity.ok("Booking deleted successfully.");
+			return ResponseEntity.ok().build();
 		} else {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 		}

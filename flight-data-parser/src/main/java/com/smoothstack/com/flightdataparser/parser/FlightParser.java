@@ -45,7 +45,6 @@ public class FlightParser implements CommandLineRunner {
             while((line = br.readLine()) != null) {
                 flight = parseRow(line.split(","));
                 flightList.add(flight);
-                //System.out.println(flight.getDepartTime().toString());
             }
             flightService.saveAllFlights(flightList);
         } catch (IOException e) {

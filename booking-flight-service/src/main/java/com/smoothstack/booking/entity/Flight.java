@@ -1,4 +1,4 @@
-package com.smoothstack.orchestrator.entity;
+package com.smoothstack.booking.entity;
 
 import lombok.*;
 import javax.persistence.*;

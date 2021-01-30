@@ -1,4 +1,4 @@
-package com.ss.UtopiaAirlines.enitity;
+package com.ss.UtopiaAirlines.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table( name = "tbl_airport")
 public class Airport {
-	
+
 	@Id
 	private String iataIdent;
 	private String city;
@@ -35,7 +35,7 @@ public class Airport {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
-	
+
+
+
 }

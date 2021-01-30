@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 @RestController
@@ -25,10 +27,13 @@ public class AuthController {
     private ConfirmationTokenService confirmationTokenService;
 
     @PostMapping("/sign-up")
-    ResponseEntity<Object> signUp(@RequestBody User user) {
+    ResponseEntity<Object> signUp(@RequestBody User user) throws URISyntaxException {
         AuthResponse response = new AuthResponse();
         try {
-            userService.signUpUser(user);
+            User createdUser = userService.signUpUser(user);
+            response.setSuccess(true);
+            response.setMsg("Account created confirm by email");
+            return ResponseEntity.created(new URI("/users/" + createdUser.getUserId())).body(response);
         } catch (DataIntegrityViolationException e) {
             System.err.println(e);
             response.setMsg("Data integrity violation check JSON syntax");
@@ -42,9 +47,6 @@ public class AuthController {
             response.setSuccess(false);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        response.setSuccess(true);
-        response.setMsg("Account created confirm by email");
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/confirm/{token}")

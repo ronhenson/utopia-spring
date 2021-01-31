@@ -4,11 +4,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 /**
  * @author ronh
  *
  */
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table( name = "tbl_airport")
 public class Airport {

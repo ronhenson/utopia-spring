@@ -1,7 +1,7 @@
 package com.smoothstack.utopia.service;
 
 import com.smoothstack.utopia.dao.UserDao;
-import com.smoothstack.utopia.entity.User;
+// import com.smoothstack.utopia.entity.User;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,9 +18,9 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private static User userOne;
-    private static User userTwo;
-    private static User userThree;
+    // private static User userOne;
+    // private static User userTwo;
+    // private static User userThree;
 
 //    @BeforeAll
 //    public static void init() {

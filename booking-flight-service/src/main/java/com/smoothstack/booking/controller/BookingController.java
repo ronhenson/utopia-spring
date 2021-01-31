@@ -75,9 +75,9 @@ public class BookingController {
 			@RequestBody Booking booking) throws ResourceNotFoundException {
 		Booking booked = bookingService.getBookingById(booking.getBookingId().longValue());
 		if (booked.getBookerId().longValue() == userId || userRole.equals("EMPLOYEE")) {
-			booking.setBookerId(booked.getBookerId());
-			bookingService.updateBooking(booking);
-			return ResponseEntity.ok(booking);
+			booking.setBookerId(userId.intValue());
+			Booking updatedBooking = bookingService.updateBooking(booking);
+			return ResponseEntity.ok(updatedBooking);
 		} else {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 		}

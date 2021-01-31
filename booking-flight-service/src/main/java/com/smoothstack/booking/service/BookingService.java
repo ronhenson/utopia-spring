@@ -66,7 +66,7 @@ public class BookingService {
 		return bookingDao.save(booking);
 	}
 
-	public void updateBooking(Booking booking) throws ResourceNotFoundException {
+	public Booking updateBooking(Booking booking) throws ResourceNotFoundException {
 		Optional<Booking> dbBooking = bookingDao.findById(booking.getBookingId().longValue());
 		if (dbBooking.isEmpty()) {
 			throw new ResourceNotFoundException(booking.getBookingId().intValue(), ResourceType.BOOKING);
@@ -74,8 +74,7 @@ public class BookingService {
 		Booking bookingToUpdate = dbBooking.get();
 		bookingToUpdate.setIsActive(booking.getIsActive());
 		bookingToUpdate.setStripeId(booking.getStripeId());
-		bookingToUpdate.setBookerId(booking.getBookerId());
-		bookingDao.save(bookingToUpdate);
+		return bookingDao.save(bookingToUpdate);
 	}
 
 	@Transactional

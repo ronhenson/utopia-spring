@@ -87,20 +87,6 @@ public class AuthenticationTests {
     mockMvc.perform(post("/auth/sign-up").content(asJsonString(json)).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
-  
-  @DisplayName("sign up with too many fields")
-  @Test
-  @Order(4)
-  void test4() throws Exception {
-    Map<String, String> json = new HashMap<>();
-    json.put("email", "test@abc.com");
-    json.put("password", "pass");
-    json.put("firstName", "first");
-    json.put("lastName", "last");
-    json.put("badFieldName", "bad");
-    mockMvc.perform(post("/auth/sign-up").content(asJsonString(json)).contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest());
-  }
 
   @DisplayName("sign up with already taken email")
   @Test
@@ -118,11 +104,12 @@ public class AuthenticationTests {
     User user = new User("Derek", "Lance", "password", "abc6@def.com");
     mockMvc.perform(post("/auth/sign-up").content(asJsonString(user)).contentType(MediaType.APPLICATION_JSON));
     Message[] messages = greenmail.getReceivedMessages();
+    System.out.println("test6 messages: " + messages.length);
     String emailMessage = GreenMailUtil.getBody(messages[messages.length - 1]);
-    Integer tokenStart = emailMessage.indexOf("?token=");
-    String token = emailMessage.substring(tokenStart);
-    mockMvc.perform(get("/auth/confirm" + token)).andExpect(status().isOk());
-    mockMvc.perform(get("/auth/confirm" + token)).andExpect(status().isBadRequest());
+    Integer tokenStart = emailMessage.indexOf("/signup/");
+    String token = emailMessage.substring(tokenStart + "/signup/".length());
+    mockMvc.perform(get("/auth/confirm/" + token)).andExpect(status().isOk());
+    mockMvc.perform(get("/auth/confirm/" + token)).andExpect(status().isBadRequest());
   }
 
   @DisplayName("login with unconfirmed account")

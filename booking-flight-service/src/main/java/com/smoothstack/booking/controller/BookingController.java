@@ -56,16 +56,15 @@ public class BookingController {
 
 	}
 
-	@PostMapping("/flight/{flightId}")
-	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest request, @PathVariable Long flightId,
-			@RequestHeader("user-id") Long userId,
-			@RequestHeader("user-role") String userRole)
-			throws ResourceExistsException, ResourceNotFoundException, URISyntaxException {
-			System.out.println("request" + request.getStripeId());
-		Booking booking = request.getBooking();
-		booking.setBookerId(userId.intValue());
-		bookingService.createBooking(booking, flightId, request.getTravelerIds());
-		return ResponseEntity.created(new URI("/booking/" + booking.getBookingId())).body(booking);
+	@PostMapping("")
+	public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
+		try {
+			bookingService.createBooking(booking);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
 	@PutMapping

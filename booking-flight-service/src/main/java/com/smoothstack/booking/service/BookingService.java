@@ -42,27 +42,13 @@ public class BookingService {
 	}
 
 	@Transactional
-	public Booking createBooking(Booking booking, Long flightId, List<Integer> travelerIds)
-			throws ResourceExistsException, ResourceNotFoundException {
-		
+	public Booking createBooking(Booking booking)
+			throws Exception {
+		if(booking.getBookerId() == null) throw new Exception("Booker Id must not be empty");
+		if(booking.getFlights().isEmpty()) throw new Exception("Flights can't be empty");
+		if(booking.getStripeId() == null) throw new Exception("Stripe Id can't be empty");
+		if(booking.getTravelers().isEmpty()) throw new Exception("Must have travelers to create booking");
 
-		Optional<Flight> flight = flightDao.findById(flightId);
-		if (flight.isEmpty()) {
-			throw new ResourceNotFoundException(flightId.intValue(), ResourceType.FLIGHT);
-		}
-
-		if (travelerIds != null) {
-			Set<Traveler> travelers = travelerIds.stream().map(id -> {
-				Optional<Traveler> traveler = travelerDao.findById(id);
-				if (traveler.isEmpty()) {
-					throw new ResourceNotFoundException(id, ResourceType.TRAVELER);
-				}
-	
-				return traveler.get();
-			}).collect(Collectors.toSet());
-			booking.setTravelers(travelers);
-		}
-		booking.setFlights(List.of(flight.get()));
 		return bookingDao.save(booking);
 	}
 

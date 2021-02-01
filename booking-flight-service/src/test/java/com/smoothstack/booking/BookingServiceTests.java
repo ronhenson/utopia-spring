@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
-
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +61,7 @@ public class BookingServiceTests {
 	  "123 Example Rd",
     "800-123-4567",
     "abc@def.com",
-    Timestamp.from(Instant.now())
+    LocalDateTime.now()
   );
   private final Booking BOOKING = new Booking(BOOKING_ID, true, STRIPE_ID, BOOKER_ID, List.of(), Set.of());
   private final Booking BOOKING_NOT_FOUND = new Booking(
@@ -123,38 +120,17 @@ public class BookingServiceTests {
   @Test
   @DisplayName("create booking invalid flight, exception thrown")
   void test3() {
-    assertThrows(ResourceNotFoundException.class, () -> {
-      bookingService.createBooking(BOOKING, -1L, List.of(1));
+    assertThrows(Exception.class, () -> {
+      bookingService.createBooking(BOOKING);
     });
   }
 
   @Test
   @DisplayName("create booking invalid traveler, exception thrown")
   void test4() {
-    assertThrows(ResourceNotFoundException.class, () -> {
-      bookingService.createBooking(BOOKING, FLIGHT_ID, List.of(NOT_FOUND.intValue()));
+    assertThrows(Exception.class, () -> {
+      bookingService.createBooking(BOOKING);
     });
-  }
-
-  @Test
-  @DisplayName("create booking with null traveler ids")
-  void test5() {
-    Booking booking = bookingService.createBooking(BOOKING, FLIGHT_ID, null);
-    assertTrue(booking.getTravelers().isEmpty());
-  }
-
-  @Test
-  @DisplayName("create booking with empty traveler ids")
-  void test6() {
-    Booking booking = bookingService.createBooking(BOOKING, FLIGHT_ID, List.of());
-    assertTrue(booking.getTravelers().isEmpty());
-  }
-
-  @Test
-  @DisplayName("create booking with traveler id")
-  void test7() {
-    Booking booking = bookingService.createBooking(BOOKING, FLIGHT_ID, List.of(TRAVELER_ID));
-    assertThat(TRAVELER, samePropertyValuesAs(booking.getTravelers().toArray()[0]));
   }
 
   @Test

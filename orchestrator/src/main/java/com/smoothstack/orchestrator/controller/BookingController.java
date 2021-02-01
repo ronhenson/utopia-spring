@@ -48,15 +48,12 @@ public class BookingController {
 		return restTemplate.exchange(request, Booking[].class);
 	}
 
-	@PostMapping("/flight/{flightId}")
-	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest body, @PathVariable Long flightId, Authentication auth) {
-		String userRole = SecurityUtils.getRole(auth);
-		System.out.println("body" + body.getStripeId());
-		RequestEntity<BookingRequest> request = RequestEntity.post("%s/flight/%d".formatted(URL, flightId))
-				.header("user-id", auth.getPrincipal().toString())
+	@PostMapping("")
+	public ResponseEntity<Booking> createBooking(@RequestBody Booking booking, Authentication auth) {
+		booking.setBookerId(Integer.parseInt(auth.getPrincipal().toString()));
+		RequestEntity<Booking> request = RequestEntity.post(URL)
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-				.header( "user-role", userRole)
-				.accept(MediaType.APPLICATION_JSON).body(body);
+				.accept(MediaType.APPLICATION_JSON).body(booking);
 		return restTemplate.exchange(request, Booking.class);
 	}
 

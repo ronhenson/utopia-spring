@@ -1,6 +1,7 @@
 package com.smoothstack.booking.entity;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,5 +34,5 @@ public class Traveler {
 	
 	@NonNull private String email;
 	
-	@NonNull private Timestamp dob;
+	@NonNull private LocalDateTime dob;
 }

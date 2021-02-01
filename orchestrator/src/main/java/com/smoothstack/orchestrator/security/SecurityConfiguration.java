@@ -56,12 +56,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.addFilter(authenticationFilter)
 			.addFilter(authorizationFilter)
 			.authorizeRequests()
-			.antMatchers("/auth/*").permitAll()
 			.antMatchers("/getRole").authenticated()
 			.antMatchers("/booking").authenticated()
 			.antMatchers("/booking/{bookingId}").authenticated()
 			.antMatchers("/users/*").authenticated()
-			.antMatchers("/users/admin/search").hasRole(UserRole.ADMIN.name())
+			.antMatchers("/users/admin/*").hasRole(UserRole.ADMIN.name())
 			.anyRequest().permitAll();
 	}
 

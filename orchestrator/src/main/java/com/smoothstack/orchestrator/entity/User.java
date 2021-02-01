@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
 @Setter
-@Builder
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,15 +31,10 @@ public class User {
     @NonNull
     private String email;
 
-    @JsonIgnore
-    @Builder.Default
-    private UserRole userRole = UserRole.USER;
+    @NonNull
+    private UserRole userRole;
 
-    @JsonIgnore
-    @Builder.Default
     private Boolean locked = false;
 
-    @JsonIgnore
-    @Builder.Default
     private Boolean enabled = false;
 }

@@ -50,7 +50,6 @@ public class UserService {
             System.err.println(e);
             throw e;
         }
-
         return createdUser;
     }
 

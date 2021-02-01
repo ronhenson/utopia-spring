@@ -1,9 +1,6 @@
 package com.smoothstack.utopia.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -15,17 +12,25 @@ import javax.persistence.*;
 @Table(name = "tbl_users")
 public class User {
 	@Id
-	@Column(name="userId")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
+	@NonNull
 	private String firstName;
 
+	@NonNull
 	private String lastName;
 
+	@NonNull
 	private String password;
 
+	@NonNull
 	private String email;
 
-	private int userRole;
+	@NonNull
+	private UserRole userRole;
+
+	private Boolean locked = false;
+
+	private Boolean enabled = false;
 }

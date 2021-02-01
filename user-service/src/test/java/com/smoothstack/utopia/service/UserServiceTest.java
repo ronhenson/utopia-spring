@@ -2,11 +2,15 @@ package com.smoothstack.utopia.service;
 
 import com.smoothstack.utopia.dao.UserDao;
 import com.smoothstack.utopia.entity.User;
+import com.smoothstack.utopia.entity.UserRole;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +27,11 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
      private static User userOne;
      private static User userTwo;
      private static User userThree;
@@ -34,19 +43,19 @@ public class UserServiceTest {
         userOne.setFirstName("John");
         userOne.setLastName("Paul");
         userOne.setEmail("jpaul@gmail.com");
-        userOne.setUserRole(3);
+        userOne.setUserRole(UserRole.USER);
         userOne.setPassword("412Ioui1&");
         userTwo = new User();
         userTwo.setFirstName("John");
         userTwo.setLastName("Paul");
         userTwo.setEmail("pxavier@gmail.com");
-        userTwo.setUserRole(2);
+        userTwo.setUserRole(UserRole.USER);
         userTwo.setPassword("421412H$@#$");
         userThree = new User();
         userThree.setFirstName("Jennifer");
         userThree.setLastName("Larence");
         userThree.setEmail("mockingj@hungergames.com");
-        userThree.setUserRole(1);
+        userThree.setUserRole(UserRole.USER);
         userThree.setPassword("j4hunger");
     }
     @Test

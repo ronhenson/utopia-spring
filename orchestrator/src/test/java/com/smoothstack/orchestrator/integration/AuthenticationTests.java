@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.mail.Message;
 
 import static org.hamcrest.Matchers.containsString;
+
+import com.smoothstack.orchestrator.entity.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -71,7 +73,7 @@ public class AuthenticationTests {
   @Test
   @Order(2)
   void test2() throws Exception {
-    User user = new User("Derek", "Lance", "password", "abc@def.com");
+    User user = new User("Derek", "Lance", "password", "abc@def.com", UserRole.USER);
     mockMvc.perform(post("/auth/sign-up").content(asJsonString(user)).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated())
         .andExpect(header().exists("Location"));
@@ -92,7 +94,7 @@ public class AuthenticationTests {
   @Test
   @Order(5)
   void test5() throws Exception {
-    User user = new User("Derek", "Lance", "password", "abc@def.com");
+    User user = new User("Derek", "Lance", "password", "abc@def.com", UserRole.USER);
     mockMvc.perform(post("/auth/sign-up").content(asJsonString(user)).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
@@ -101,7 +103,7 @@ public class AuthenticationTests {
   @Test
   @Order(6)
   void test6() throws Exception {
-    User user = new User("Derek", "Lance", "password", "abc6@def.com");
+    User user = new User("Derek", "Lance", "password", "abc6@def.com", UserRole.USER);
     mockMvc.perform(post("/auth/sign-up").content(asJsonString(user)).contentType(MediaType.APPLICATION_JSON));
     Message[] messages = greenmail.getReceivedMessages();
     System.out.println("test6 messages: " + messages.length);

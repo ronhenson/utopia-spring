@@ -1,8 +1,11 @@
 package com.smoothstack.utopia.controller;
 
 import com.smoothstack.utopia.entity.User;
+import com.smoothstack.utopia.entity.UserRole;
+import com.smoothstack.utopia.exception.DuplicateEmailException;
 import com.smoothstack.utopia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +48,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable long id) {
+    public ResponseEntity<User> findById(
+            @PathVariable long id,
+            @RequestHeader("user-id") Long userId,
+            @RequestHeader("user-role") String userRole) {
+        if(!userRole.equals(UserRole.ADMIN.name()) && !userId.equals(id))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         Optional<User> users = userService.findById(id);
         if (!users.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -54,7 +62,12 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(
+            @PathVariable Long id,
+            @RequestHeader("user-id") Long userId,
+            @RequestHeader("user-role") String userRole) {
+        if(!userRole.equals(UserRole.ADMIN.name()) && !userId.equals(id))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         try {
             userService.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -64,13 +77,26 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User with id: " + id.toString() + " deleted successfully");
     }
 
-
     @PutMapping("")
-    public ResponseEntity<User> updateUser(@RequestBody User users) {
-        if (userService.userExists(users.getEmail()))
-            return ResponseEntity.status(HttpStatus.OK).body(userService.saveUser(users));
-        else
+    public ResponseEntity<User> updateUser(
+            @RequestBody User user,
+            @RequestHeader("user-id") Long userId,
+            @RequestHeader("user-role") String userRole) {
+        if(!userRole.equals(UserRole.ADMIN.name()) && !userId.equals(user.getUserId()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        if (userService.userExists(user.getEmail()))
+            return ResponseEntity.status(HttpStatus.OK).body(userService.saveUser(user));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(user));
+        } catch (DuplicateEmailException | DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
     }
 
 }

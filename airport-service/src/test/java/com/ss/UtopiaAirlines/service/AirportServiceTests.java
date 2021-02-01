@@ -29,20 +29,19 @@ public class AirportServiceTests {
   private AirportService airportService;
 
   private final String NOT_FOUND = "000";
-  private final String IATALIDENT = "PDX";
+  private final String IATA_IDENT = "PDX";
   private final String CITY = "Portland, OR";
   private final String NAME = "Portland International";
   private final String QUERY = "Port";
-  private final String IATALIDENTDEL = "XXX";
 
-  private final Airport AIRPORT = new Airport(IATALIDENT, CITY, NAME);
+  private final Airport AIRPORT = new Airport(IATA_IDENT, CITY, NAME);
 
   private final Airport AIRPORT_NOT_FOUND = new Airport(NOT_FOUND, "Town, CA", "Town Airport");
 
   @BeforeEach
   void setAirportDaoOutput() {
     when(airportDao.findById(NOT_FOUND)).thenReturn(Optional.empty());
-    when(airportDao.findById(IATALIDENT)).thenReturn(Optional.of(AIRPORT));
+    when(airportDao.findById(IATA_IDENT)).thenReturn(Optional.of(AIRPORT));
     when(airportDao.save(AIRPORT)).thenReturn(AIRPORT);
     when(airportDao.existsById(AIRPORT.getIataIdent())).thenReturn(true);
     when(airportDao.existsById(AIRPORT_NOT_FOUND.getIataIdent())).thenReturn(false);
@@ -59,7 +58,7 @@ public class AirportServiceTests {
   @Test
   @DisplayName("get airport by iatalIdent, expect True")
   void test2() {
-    Optional<Airport> airport = airportService.getAirportById(IATALIDENT);
+    Optional<Airport> airport = airportService.getAirportById(IATA_IDENT);
     assertTrue(airport.isPresent());
   }
 
@@ -81,7 +80,7 @@ public class AirportServiceTests {
  @DisplayName("delete airport by Id, expect exception ")
  void test5() {
    assertThrows(ResourceDoesNotExistsException.class, () -> {
-     airportService.deleteAirport(IATALIDENTDEL);
+     airportService.deleteAirport(NOT_FOUND);
    });
  }
 

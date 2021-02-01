@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity(name = "Flight")
 @Table(name = "tbl_flight")
 public class Flight {
+    private static int currentFlightNumber = 1;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long flightId;
@@ -31,4 +32,10 @@ public class Flight {
     @NonNull
     private String flightNumber;
 
+
+
+    @Override
+    public int hashCode() {
+        return departTime.getHour() + departTime.getMinute();
+    }
 }

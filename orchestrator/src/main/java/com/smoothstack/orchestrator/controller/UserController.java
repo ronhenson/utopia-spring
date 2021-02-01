@@ -1,12 +1,9 @@
 package com.smoothstack.orchestrator.controller;
 
-import com.smoothstack.orchestrator.entity.AuthResponse;
 import com.smoothstack.orchestrator.entity.User;
-import com.smoothstack.orchestrator.exception.EmailNotFoundException;
 import com.smoothstack.orchestrator.security.SecurityUtils;
 import com.smoothstack.orchestrator.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -58,7 +55,7 @@ public class UserController {
 
     @PostMapping("/admin/add")
     ResponseEntity<User> createSpecialUser(@RequestBody User user, Authentication auth) {
-        RequestEntity<User> request = RequestEntity.put(URL)
+        RequestEntity<User> request = RequestEntity.post(URL)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(user);
         return restTemplate.exchange(request, User.class);
@@ -75,7 +72,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id, Authentication auth) {
-        RequestEntity<Void> request = RequestEntity.get(URL + "/" + id)
+        RequestEntity<Void> request = RequestEntity.delete(URL + "/" + id)
                 .header("user-id", auth.getPrincipal().toString())
                 .header("user-role", SecurityUtils.getRole(auth))
                 .accept(MediaType.APPLICATION_JSON).build();;

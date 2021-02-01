@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.smoothstack.booking.exceptions.DeleteLastTravelerFromBookingException;
 import com.smoothstack.booking.exceptions.ResourceExistsException;
 import com.smoothstack.booking.exceptions.ResourceNotFoundException;
 
@@ -39,5 +40,10 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(JsonProcessingException.class)
 	protected ResponseEntity<Object> handleBadJson(JsonProcessingException ex) {
 		return handleExceptionInternal(ex, ex, null, HttpStatus.BAD_REQUEST, null);
+	}
+
+	@ExceptionHandler(DeleteLastTravelerFromBookingException.class)
+	protected ResponseEntity<Object> handleBadTravelerDelete(DeleteLastTravelerFromBookingException ex) {
+		return handleExceptionInternal(ex, null, null, HttpStatus.BAD_REQUEST, null);
 	}
 }

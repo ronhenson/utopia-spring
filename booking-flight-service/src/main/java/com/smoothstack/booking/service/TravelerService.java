@@ -10,6 +10,7 @@ import com.smoothstack.booking.dao.TravelerDao;
 import com.smoothstack.booking.entity.Booking;
 import com.smoothstack.booking.entity.BookingsHasTravelers;
 import com.smoothstack.booking.entity.Traveler;
+import com.smoothstack.booking.exceptions.DeleteLastTravelerFromBookingException;
 import com.smoothstack.booking.exceptions.ResourceNotFoundException;
 import com.smoothstack.constants.ResourceType;
 
@@ -65,6 +66,9 @@ public class TravelerService {
     Optional<Booking> booking = bookingDao.findById(bookingIdOfTraveler.longValue());
     if (booking.isEmpty()) {
       throw new ResourceNotFoundException(bookingIdOfTraveler, ResourceType.BOOKING);
+    }
+    if (booking.get().getTravelers().size() == 1) {
+      throw new DeleteLastTravelerFromBookingException();
     }
     booking.get().getTravelers().remove(dbTraveler.get());
     bookingDao.save(booking.get());

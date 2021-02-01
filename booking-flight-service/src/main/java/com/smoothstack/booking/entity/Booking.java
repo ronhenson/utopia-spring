@@ -46,8 +46,8 @@ public class Booking {
 
 	private Integer bookerId;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-	@JoinTable(name = "tbl_flight_has_bookings", joinColumns = {@JoinColumn(name="bookingId")}, inverseJoinColumns = {@JoinColumn(name="flightId")})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@JoinTable(name = "tbl_flight_has_bookings", joinColumns = {@JoinColumn(name="bookingId")}, inverseJoinColumns = {@JoinColumn(name="flightId", insertable = false, updatable = false)})
 	private List<Flight> flights;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

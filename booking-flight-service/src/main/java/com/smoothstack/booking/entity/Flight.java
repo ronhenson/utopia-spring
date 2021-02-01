@@ -1,5 +1,6 @@
 package com.smoothstack.booking.entity;
 
+import com.smoothstack.booking.service.FlightService;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;

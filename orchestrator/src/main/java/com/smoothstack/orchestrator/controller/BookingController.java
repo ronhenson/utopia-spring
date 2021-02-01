@@ -38,7 +38,7 @@ public class BookingController {
 		return restTemplate.exchange(request, Booking.class);
 	}
 
-	@GetMapping
+	@GetMapping()
 	public ResponseEntity<Booking[]> getAllBookings(Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
 		RequestEntity<Void> request = RequestEntity.get(URL)

@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.smoothstack.booking.dao.FlightDao;
@@ -66,6 +67,10 @@ public class FlightService {
         List<FlightDetails> flightDetails = flightDetailsService.findByOriginDest(origin, dest);
         List<String> fltNums = flightDetails.parallelStream().map(fltD -> fltD.getFlightNumber()).collect(Collectors.toList());
         return flightDao.findByFlightNumberInAndDepartTimeBetween(fltNums, start, end);
+    }
+
+    public Optional<Flight> findByFlightId(Long id) {
+        return flightDao.findById(id);
     }
 
 

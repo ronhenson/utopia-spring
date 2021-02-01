@@ -1,6 +1,7 @@
 package com.smoothstack.booking.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,11 +45,11 @@ public class BookingService {
 	@Transactional
 	public Booking createBooking(Booking booking)
 			throws Exception {
+
 		if(booking.getBookerId() == null) throw new Exception("Booker Id must not be empty");
 		if(booking.getFlights().isEmpty()) throw new Exception("Flights can't be empty");
 		if(booking.getStripeId() == null) throw new Exception("Stripe Id can't be empty");
 		if(booking.getTravelers().isEmpty()) throw new Exception("Must have travelers to create booking");
-
 		return bookingDao.save(booking);
 	}
 
@@ -85,6 +86,6 @@ public class BookingService {
 		if (booking.isEmpty()) {
 			return null;
 		}
-		return booking.get().getBookerId() == userId ? booking.get() : null;
+		return booking.get().getBookerId().equals(userId) ? booking.get() : null;
 	}
 }

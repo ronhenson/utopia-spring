@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ss.UtopiaAirlines.dao;
 
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.ss.UtopiaAirlines.enitity.Airport;
+import com.ss.UtopiaAirlines.entity.Airport;
 
 /**
  * @author ronh
@@ -17,10 +17,10 @@ import com.ss.UtopiaAirlines.enitity.Airport;
  */
 @Repository
 public interface AirportDao extends JpaRepository<Airport, String>{
-	
+
 	List<Airport> findByCityIgnoreCase(String city);
 
-	@Query(value = 
+	@Query(value =
 		"select * from tbl_airport "
 			+ "where iataIdent like %?1% "
 			+ "or city like %?1% "

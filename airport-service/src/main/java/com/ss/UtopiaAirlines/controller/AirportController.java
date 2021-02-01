@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.ss.UtopiaAirlines.controller;
 
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-import com.ss.UtopiaAirlines.enitity.Airport;
+import com.ss.UtopiaAirlines.entity.Airport;
 import com.ss.UtopiaAirlines.service.AirportService;
 import com.ss.UtopiaAirlines.exceptions.ResourceDoesNotExistsException;
 import com.ss.UtopiaAirlines.exceptions.ResourceExistsException;
@@ -35,10 +35,10 @@ import com.ss.UtopiaAirlines.exceptions.ResourceExistsException;
 @RestController
 @RequestMapping("/airport")
 public class AirportController {
-	
+
 	@Autowired
 	AirportService airportService;
-	
+
 	@GetMapping("/{airportId}")
 	public Airport getAirportById(@PathVariable String airportId, HttpServletResponse response) {
 		Optional<Airport> airport = airportService.getAirportById(airportId);
@@ -54,35 +54,35 @@ public class AirportController {
 		List<Airport> airports = airportService.getAirportList(airportIds);
 		return ResponseEntity.ok(airports);
 	}
-	
-	
+
+
 	@GetMapping
 	public List<Airport> findByCity(@RequestParam(required = false) String query, @RequestParam(value = "city", required = false) String cityAirport,
 			HttpServletResponse response) {
 		if (query != null) {
 			return airportService.search(query);
 		}
-		
+
 		try {
 			if (cityAirport != null) {
 				return airportService.getAllAirports();
 			}
 
 			List<Airport> cityList =  airportService.findByCity(cityAirport);
-			
+
 			if (cityList.isEmpty()) {
 				response.setStatus(HttpStatus.NOT_FOUND.value());
 			}
-			
+
 			return cityList;
-			
+
 		} catch (ResourceDoesNotExistsException e) {
 	    	response.setStatus(HttpStatus.BAD_REQUEST.value());
 	    	return null;
 		}
-		    
+
 	}
-	
+
 	@PostMapping
 	public Airport addAirport(@RequestBody Airport airport, HttpServletResponse response) {
 		try {
@@ -91,9 +91,9 @@ public class AirportController {
 			response.setStatus(HttpStatus.BAD_REQUEST.value());
 			return null;
 		}
-		
+
 	}
-	
+
 	@PutMapping
 	public Airport updateAirport(@RequestBody Airport airport, HttpServletResponse response) {
 		try {
@@ -103,7 +103,7 @@ public class AirportController {
 			return null;
 		}
 	}
-	
+
 	@DeleteMapping("/{airportId}")
 	public void deleteAirport(@PathVariable String airportId, HttpServletResponse response) {
 		try {

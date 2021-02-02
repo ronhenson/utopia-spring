@@ -51,20 +51,20 @@ public class AirportServiceTests {
 
   @Test
   @DisplayName("get airport by iatalIdent, not found, expect False")
-  void test1() {
+  void testGetAirportByIdFalse() {
     assertFalse(airportService.getAirportById(NOT_FOUND).isPresent());
   }
 
   @Test
   @DisplayName("get airport by iatalIdent, expect True")
-  void test2() {
+  void testgetAirportByIdTrue() {
     Optional<Airport> airport = airportService.getAirportById(IATA_IDENT);
     assertTrue(airport.isPresent());
   }
 
  @Test
  @DisplayName("update airport, expect Exception")
- void test3() {
+ void testUpdateAirportException() {
    assertThrows(ResourceDoesNotExistsException.class, () -> {
      airportService.updateAirport(AIRPORT_NOT_FOUND);
    });
@@ -72,13 +72,13 @@ public class AirportServiceTests {
 
  @Test
  @DisplayName("update airport, expect True")
- void test4() throws ResourceDoesNotExistsException {
+ void testUpdateAirportTrue() throws ResourceDoesNotExistsException {
      assertThat(AIRPORT, samePropertyValuesAs(airportService.updateAirport(AIRPORT)));
  }
 
  @Test
  @DisplayName("delete airport by Id, expect exception ")
- void test5() {
+ void testDeleteAirportException() {
    assertThrows(ResourceDoesNotExistsException.class, () -> {
      airportService.deleteAirport(NOT_FOUND);
    });
@@ -86,14 +86,14 @@ public class AirportServiceTests {
 
  @Test
  @DisplayName("query by airport id and/or name , expect list")
- void test6() {
+ void testQueryList() {
      List<Airport> airportList = airportService.search(QUERY);
      assertThat(airportList.get(0), samePropertyValuesAs(AIRPORT));
  }
 
  @Test
  @DisplayName("Find all, expect list")
- void test7() throws ResourceDoesNotExistsException {
+ void testGetAllAirports() throws ResourceDoesNotExistsException {
     List<Airport> airportList = airportService.getAllAirports();
     assertThat(airportList.get(0), samePropertyValuesAs(AIRPORT));
  }

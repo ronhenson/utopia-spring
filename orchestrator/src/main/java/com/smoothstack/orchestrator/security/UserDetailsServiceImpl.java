@@ -18,6 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     UserDao userDao;
 
+    // map our user entity from the database into Spring Security UserDetails object
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 

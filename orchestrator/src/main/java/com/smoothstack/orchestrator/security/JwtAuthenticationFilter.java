@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         LoginCredentials credentials = null;
         try {
-            credentials = new ObjectMapper().readValue(request.getInputStream(), LoginCredentials.class);
+            credentials = new ObjectMapper().readValue(request.getReader(), LoginCredentials.class);
         } catch (JsonParseException | JsonMappingException ex) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return null;

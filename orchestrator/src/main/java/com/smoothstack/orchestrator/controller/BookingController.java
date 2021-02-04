@@ -71,7 +71,7 @@ public class BookingController {
 		return restTemplate.exchange(request, Booking.class);
 	}
 	
-	// test commit for jenkins
+	// test commit for jenkins.
 	@DeleteMapping("/{bookingId}")
 	public ResponseEntity<String> deleteBooking(@PathVariable Integer bookingId, Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);

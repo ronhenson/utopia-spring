@@ -16,6 +16,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin
@@ -68,5 +71,13 @@ public class AuthController {
         response.setSuccess(true);
         response.setEmailIsDuplicate(userService.userExists(email));
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/logout")
+    ResponseEntity<Void> logout(HttpServletResponse response) {
+        Cookie jwtCookieRemove = new Cookie("jwt", "");
+        jwtCookieRemove.setMaxAge(0);
+        response.addCookie(jwtCookieRemove);
+        return ResponseEntity.ok(null);
     }
 }

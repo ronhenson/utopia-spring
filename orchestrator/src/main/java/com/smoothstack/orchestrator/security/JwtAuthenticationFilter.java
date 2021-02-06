@@ -2,10 +2,10 @@ package com.smoothstack.orchestrator.security;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,11 +60,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
 
         String token = JWT.create().withSubject(userDetails.getUserId().toString())
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
 
+        System.out.println("successfully logged in. created jwt cookie...");
+        Cookie jwtCookie = new Cookie("jwt", token);
+        jwtCookie.setMaxAge(JwtProperties.EXPIRATION_TIME);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setPath("/");
+        response.addCookie(jwtCookie);
+
         response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-        response.getWriter().printf("{ \"token\" : \"%s\", \"firstName\" : \"%s\", \"lastName\" : \"%s\" }",
-            token, userDetails.getFirstName(), userDetails.getLastName());
+        response.getWriter().printf("{ \"firstName\" : \"%s\", \"lastName\" : \"%s\" }",
+            userDetails.getFirstName(), userDetails.getLastName());
     }
 }

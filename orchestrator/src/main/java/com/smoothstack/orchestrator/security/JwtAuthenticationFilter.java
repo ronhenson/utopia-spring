@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = JWT.create().withSubject(userDetails.getUserId().toString())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
 
-        System.out.println("successfully logged in. created jwt cookie...");
+        logger.info("successfully logged in. creating jwt cookie...");
         Cookie jwtCookie = new Cookie("jwt", token);
         jwtCookie.setMaxAge(JwtProperties.EXPIRATION_TIME);
         jwtCookie.setHttpOnly(true);

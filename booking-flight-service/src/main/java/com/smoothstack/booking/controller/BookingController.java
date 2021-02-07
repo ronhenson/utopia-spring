@@ -36,7 +36,8 @@ public class BookingController {
 			@RequestHeader("user-role") String userRole) 
 			throws ResourceNotFoundException {
 		Booking booking = bookingService.getBookingById(bookingId.longValue());
-		if (booking.getBookerId().longValue() == userId || userRole.equals("EMPLOYEE")) {
+		if (booking.getBookerId().longValue() == userId || userRole.equals("EMPLOYEE")
+			|| userRole.equals("ADMIN")) {
 			return ResponseEntity.ok(booking);
 		} else {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -46,12 +47,12 @@ public class BookingController {
 	@GetMapping
 	public ResponseEntity<List<Booking>> getBookings(@RequestHeader("user-id") Integer userId,
 			@RequestHeader("user-role") String userRole) {
-		if (userRole.equals("EMPLOYEE")) {
+		if (userRole.equals("EMPLOYEE") || userRole.equals("ADMIN")) {
 			return ResponseEntity.ok(bookingService.getAllBookings());
 		} else if (userRole.equals("USER")) {
 			return ResponseEntity.ok(bookingService.getByUserId(userId));
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 
 	}

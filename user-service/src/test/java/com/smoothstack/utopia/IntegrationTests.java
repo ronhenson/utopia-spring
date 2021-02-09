@@ -131,9 +131,9 @@ public class IntegrationTests {
     .andExpect(jsonPath("$[0].lastName", is("one")));
   }
   
-  @DisplayName("test find by first name")
+  @DisplayName("test find all by first name")
   @Test
-  void testFindByFirst() throws Exception {
+  void testFindAllByFirstName() throws Exception {
     mockMvc.perform(get("/users?firstName=user"))
     .andExpect(status().isOk())
     .andExpect(jsonPath("$", hasSize(2)))

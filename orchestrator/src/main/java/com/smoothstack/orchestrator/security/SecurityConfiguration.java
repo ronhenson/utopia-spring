@@ -1,5 +1,7 @@
 package com.smoothstack.orchestrator.security;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.smoothstack.orchestrator.dao.UserDao;
@@ -45,9 +47,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.csrf().disable()
 			.cors().configurationSource(request -> {
 					CorsConfiguration cors = new CorsConfiguration();
-					cors.setAllowedOriginPatterns(List.of("*"));
-					cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-					cors.setAllowedHeaders(List.of("*"));
+					cors.setAllowedOriginPatterns(Arrays.asList("*"));
+					cors.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+					cors.setAllowedHeaders(Arrays.asList("*"));
 					return cors;
 			})
 			.and()

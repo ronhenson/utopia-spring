@@ -60,7 +60,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             Optional<User> user = userDao.findById(id);
 
-            if (user.isEmpty()) {
+            if (!user.isPresent()) {
                 return null;
             }
 

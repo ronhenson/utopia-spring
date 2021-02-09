@@ -22,7 +22,7 @@ public class ResourceExistsException extends RuntimeException {
 	
 	@Override
 	public String getMessage() {
-		return "The resource `%s` of id `%d` already exists.".formatted(resourceType.getText(), resourceId);
+		return String.format("The resource `%s` of id `%d` already exists.", resourceType.getText(), resourceId);
 	}
 
 }

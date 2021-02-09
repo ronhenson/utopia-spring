@@ -52,7 +52,7 @@ public class BookingController {
 	public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest body, @PathVariable Long flightId, Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
 		System.out.println("body" + body.getStripeId());
-		RequestEntity<BookingRequest> request = RequestEntity.post("%s/flight/%d".formatted(URL, flightId))
+		RequestEntity<BookingRequest> request = RequestEntity.post(String.format("%s/flight/%d", URL, flightId))
 				.header("user-id", auth.getPrincipal().toString())
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
 				.header( "user-role", userRole)
@@ -75,7 +75,7 @@ public class BookingController {
 	@DeleteMapping("/{bookingId}")
 	public ResponseEntity<String> deleteBooking(@PathVariable Integer bookingId, Authentication auth) {
 		String userRole = SecurityUtils.getRole(auth);
-		RequestEntity<Void> request = RequestEntity.delete("%s/%d".formatted(URL, bookingId))
+		RequestEntity<Void> request = RequestEntity.delete(String.format("%s/%d", URL, bookingId))
 				.header("user-id", auth.getPrincipal().toString())
 				.header( "user-role", userRole)
 				.accept(MediaType.APPLICATION_JSON).build();

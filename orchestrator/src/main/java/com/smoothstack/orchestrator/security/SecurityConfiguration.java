@@ -44,7 +44,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			// we don't need csrf or session state since we are using JWT
 			.csrf().disable()
 			.cors().configurationSource(request -> {
-					var cors = new CorsConfiguration();
+					CorsConfiguration cors = new CorsConfiguration();
 					cors.setAllowedOriginPatterns(List.of("*"));
 					cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 					cors.setAllowedHeaders(List.of("*"));

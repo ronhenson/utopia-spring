@@ -21,7 +21,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(EmailNotFoundException.class)
 	protected ResponseEntity<Object> handleConflict(EmailNotFoundException ex) {
-		return handleExceptionInternal(ex, "Email address `%s` not found.".formatted(ex.getEmail()), null,
+		return handleExceptionInternal(ex, String.format("Email address `%s` not found.", ex.getEmail()), null,
 				HttpStatus.BAD_REQUEST, null);
 	}
 

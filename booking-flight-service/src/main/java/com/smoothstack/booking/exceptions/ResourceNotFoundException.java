@@ -18,7 +18,7 @@ public class ResourceNotFoundException extends RuntimeException {
 	
 	@Override
 	public String getMessage() {
-		return "The resource `%s` of id `%d` does not exist.".formatted(resourceType.getText(), resourceId);
+		return String.format("The resource `%s` of id `%d` does not exist.", resourceType.getText(), resourceId);
 	}
 	
 }

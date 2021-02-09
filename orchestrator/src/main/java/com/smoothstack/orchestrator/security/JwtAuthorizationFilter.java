@@ -37,13 +37,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
     
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
 
         Authentication authentication = getUsernamePasswordAuthentication(request, response);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        filterChain.doFilter(request, response);
+        try {
+            filterChain.doFilter(request, response);
+        } catch (IOException | ServletException exc) {
+            logger.error(exc.getMessage());
+        }
     }
 
     private String readTokenFromRequest(HttpServletRequest request, HttpServletResponse response) {
@@ -62,7 +65,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             try {
                 objectMapper.writeValue(response.getWriter(), null);
             } catch (Exception exc) {
-                exc.printStackTrace();
+                logger.error(exc.getMessage());
             }
             return null;
         }
@@ -93,6 +96,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             logger.info("successfully authorized");
             return auth;
         } catch (JWTVerificationException | NumberFormatException ex) {
+            logger.error(ex.getMessage());
             return null;
         }
     }

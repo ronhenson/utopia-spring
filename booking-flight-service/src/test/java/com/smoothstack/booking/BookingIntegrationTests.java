@@ -43,7 +43,7 @@ public class BookingIntegrationTests {
   private final Integer BOOKING_NOT_OWNED_ID = 2;
   private final Long LOGGED_IN_USER_ID = 1L;
   private final Long LOGGED_IN_USER_ID_NOT_AUTHORIZED= 5L;
-  private final Integer USER_ID_NO_BOOKINGS = 5;
+  private final Integer USER_ID_NO_BOOKINGS = 99;
   private final Integer FLIGHT_ID = 1;
   private final Integer TRAVELER_ID = 1;
   private final Long CREATED_BOOKING_ID = 4L;
@@ -237,7 +237,7 @@ public class BookingIntegrationTests {
       .andExpect(jsonPath("$.travelers[0].travelerId", is(TRAVELER_ID)));
   }
 
-  @DisplayName("test update booking, expect  ")
+  @DisplayName("test update booking as authorized user, expect  200")
   @Test
   @Order(4)
   void testUpdateBooking() throws Exception {
@@ -246,6 +246,55 @@ public class BookingIntegrationTests {
     mockMvc.perform(
       put("/booking")
         .header("user-id", LOGGED_IN_USER_ID)
+        .header("user-role", "USER")
+        .content(mapper.writeValueAsString(booking))
+        .contentType(MediaType.APPLICATION_JSON)
+      )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.isActive", is(false)));
+  }
+
+  @DisplayName("test update booking that does not exist, expect not found  ")
+  @Test
+  @Order(4)
+  void testUpdateBookingNotFound() throws Exception {
+    Booking booking = new Booking(USER_ID_NO_BOOKINGS.longValue(), false, "payment", LOGGED_IN_USER_ID.intValue(), List.of(), Set.of());
+    // BookingRequest bookingRequest = new BookingRequest(booking, List.of(TRAVELER_ID));
+    mockMvc.perform(
+      put("/booking")
+        .header("user-id", LOGGED_IN_USER_ID)
+        .header("user-role", "USER")
+        .content(mapper.writeValueAsString(booking))
+        .contentType(MediaType.APPLICATION_JSON)
+      )
+        .andExpect(status().isNotFound());
+  }
+
+  @DisplayName("test update booking nost authorized user, expect forbidden")
+  @Test
+  @Order(4)
+  void testUpdateBookingForbidden() throws Exception {
+    Booking booking = new Booking(BOOKING_ID.longValue(), false, "payment", LOGGED_IN_USER_ID.intValue(), List.of(), Set.of());
+    // BookingRequest bookingRequest = new BookingRequest(booking, List.of(TRAVELER_ID));
+    mockMvc.perform(
+      put("/booking")
+        .header("user-id", LOGGED_IN_USER_ID_NOT_AUTHORIZED)
+        .header("user-role", "USER")
+        .content(mapper.writeValueAsString(booking))
+        .contentType(MediaType.APPLICATION_JSON)
+      )
+        .andExpect(status().isForbidden());
+  }
+
+  @DisplayName("test update booking as not user owner with employee role, expect 200")
+  @Test
+  @Order(4)
+  void testUpdateBookingEmployeeRole() throws Exception {
+    Booking booking = new Booking(BOOKING_ID.longValue(), false, "payment", LOGGED_IN_USER_ID.intValue(), List.of(), Set.of());
+    // BookingRequest bookingRequest = new BookingRequest(booking, List.of(TRAVELER_ID));
+    mockMvc.perform(
+      put("/booking")
+        .header("user-id", LOGGED_IN_USER_ID_NOT_AUTHORIZED)
         .header("user-role", "EMPLOYEE")
         .content(mapper.writeValueAsString(booking))
         .contentType(MediaType.APPLICATION_JSON)
@@ -254,7 +303,7 @@ public class BookingIntegrationTests {
         .andExpect(jsonPath("$.isActive", is(false)));
   }
 
-  @DisplayName("test delete booking, expect OK   ")
+  @DisplayName("test delete booking as a valid user, expect OK   ")
   @Test
   @Order(6)
   void testDeleteBooking() throws Exception {
@@ -266,19 +315,19 @@ public class BookingIntegrationTests {
         .andExpect(status().isOk());
   }
 
-  @DisplayName("test delete booking, expect not found")
+  @DisplayName("test delete booking that does not exist, expect not found")
   @Test
   @Order(7)
   void testDeleteBookingNotFound() throws Exception {
     mockMvc.perform(
-      delete("/booking/" + "5")
+      delete("/booking/" + USER_ID_NO_BOOKINGS)
         .header("user-id", LOGGED_IN_USER_ID)
         .header("user-role", "USER")
       )
         .andExpect(status().isNotFound());
   }
 
-  @DisplayName("test delete booking, expect forbidden")
+  @DisplayName("test delete booking not authorized, expect forbidden")
   @Test
   @Order(5)
   void testDeleteBookingNotAuthorized() throws Exception {

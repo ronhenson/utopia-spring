@@ -2,6 +2,7 @@ package com.smoothstack.orchestrator.security;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smoothstack.orchestrator.dao.UserDao;
 
 import com.smoothstack.orchestrator.entity.UserRole;
@@ -30,6 +31,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	UserDao userDao;
 
+	@Autowired
+	ObjectMapper mapper;
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) {
 		auth.authenticationProvider(authenticationProvider());
@@ -39,15 +43,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authenticationManager());
 		authenticationFilter.setFilterProcessesUrl("/auth/login");
-		JwtAuthorizationFilter authorizationFilter = new JwtAuthorizationFilter(authenticationManager(), userDao);
+		JwtAuthorizationFilter authorizationFilter = new JwtAuthorizationFilter(authenticationManager(), userDao, mapper);
 		http
 			// we don't need csrf or session state since we are using JWT
 			.csrf().disable()
 			.cors().configurationSource(request -> {
 					var cors = new CorsConfiguration();
-					cors.setAllowedOriginPatterns(List.of("*"));
+					cors.setAllowedOriginPatterns(List.of("http://localhost:4200"));
 					cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 					cors.setAllowedHeaders(List.of("*"));
+					cors.setAllowCredentials(true);
 					return cors;
 			})
 			.and()

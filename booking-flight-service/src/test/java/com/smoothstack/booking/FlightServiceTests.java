@@ -2,17 +2,14 @@ package com.smoothstack.booking;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.MatcherAssert.*;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import com.smoothstack.booking.dao.FlightDao;
 import com.smoothstack.booking.dao.FlightDetailsDao;
@@ -47,7 +44,6 @@ public class FlightServiceTests {
 
   private final long FLIGHT_ID = 3l;
   private final long FLIGHT_ID_TWO = 4l;
-  private final Long NOT_FOUND_FLIGHT_ID = 0L;
 
   private final String FLIGHT_ONE_DATE = "2021-10-15";
   private final String FLIGHT_TWO_DATE = "2021-10-15";
@@ -60,13 +56,13 @@ public class FlightServiceTests {
   private final LocalDateTime FLIGHT_ONE_ACTUAL_END = getFormattedDate("2021-10-15 12:00:00");
   private final LocalDateTime FLIGHT_TWO_ACTUAL_START = getFormattedDate("2021-10-15 13:00:00");
   private final LocalDateTime FLIGHT_TWO_ACTUAL_END = getFormattedDate("2021-10-15 16:00:00");
+  private final LocalDateTime FLIGHT_CONNECT_NEXT_DAY_ACTUAL_START = getFormattedDate("2021-11-15 13:00:00");
+  private final LocalDateTime FLIGHT_CONNECT_NEXT_DAY_ACTUAL_END = getFormattedDate("2021-11-15 16:00:00");
 
   private final List<String> FLIGHT_NUMBERS = List.of("12345");
   private final List<String> FLIGHT_NUMBERS_TWO = List.of("67890");
   private final List<String> HUBS = Arrays.asList("HUB");
-  private final List<String> NOT_FOUND_HUBS = Arrays.asList("HUB");
   private final String NOT_FOUND = "NFO";
-  private final List<String> NOT_FOUND_FLIGHT_NUMBERS = List.of("00000");
   private final String ORIGIN = "ORI";
   private final String DEST = "DES";
   private final String HUB = "HUB";
@@ -116,6 +112,15 @@ public class FlightServiceTests {
     FLIGHT_NUMBERS_TWO.get(0),
     FLIGHT_DETAILS_TWO);
 
+  private final Flight FLIGHT_CONNECT_NEXT_DAY = new Flight(
+    FLIGHT_ID_TWO,
+    FLIGHT_CONNECT_NEXT_DAY_ACTUAL_START,
+    FLIGHT_CONNECT_NEXT_DAY_ACTUAL_END,
+    40,     // vacant seats
+    450.00, // price
+    FLIGHT_NUMBERS_TWO.get(0),
+    FLIGHT_DETAILS_TWO);
+
   private final MultiHopFlight multiHopFlight = new MultiHopFlight (
     FLIGHT_ONE,
     FLIGHT_TWO
@@ -127,15 +132,8 @@ public class FlightServiceTests {
   @BeforeEach
   void setFlightDetailsDaoOutput() {
     when(flightDetailsDao.findByDepartCityIdAndArriveCityIdIn(ORIGIN, HUBS)).thenReturn(List.of(FLIGHT_DETAILS));
-    // when(flightDetailsDao.findByDepartCityIdAndArriveCityIdIn(NOT_FOUND, HUBS)).thenReturn(List.of());
-    // when(flightDetailsDao.findByDepartCityIdAndArriveCityIdIn(ORIGIN, NOT_FOUND_HUBS)).thenReturn(List.of());
-
     when(flightDetailsDao.findByArriveCityIdAndDepartCityIdIn(DEST, HUBS)).thenReturn(List.of(FLIGHT_DETAILS_TWO));
-    // when(flightDetailsDao.findByArriveCityIdAndDepartCityIdIn(NOT_FOUND, HUBS)).thenReturn(List.of());
-
     when(flightDetailsDao.findByArriveCityIdAndDepartCityId(DEST, ORIGIN)).thenReturn(List.of(FLIGHT_DETAILS));
-    // when(flightDetailsDao.findByArriveCityIdAndDepartCityId(DEST, NOT_FOUND`)).thenReturn(List.of());
-    // when(flightDetailsDao.findByArriveCityIdAndDepartCityId(NOT_FOUND, ORIGIN)).thenReturn(List.of());
   }
 
   @Test
@@ -161,8 +159,6 @@ public class FlightServiceTests {
     assertThat(flights, is(List.of()));
   }
 
-  //TODO round trip test
-
   @Test
   @DisplayName("MultiHop Flight, find flights, expect flight Leg1 and Leg2 list")
   void findMultiHopFlight() {
@@ -173,7 +169,6 @@ public class FlightServiceTests {
     when(flightDetailsService.findHubsFromOrigin(ORIGIN)).thenReturn(List.of(FLIGHT_DETAILS_ONE));
     when(flightDetailsService.findHubsFromDest(DEST)).thenReturn(List.of(FLIGHT_DETAILS_TWO));
 
-    System.out.println("Origin " + ORIGIN + "  dest " + DEST + "  Start date " + FLIGHT_ONE_DATE);
     List<MultiHopFlight> flights = flightService.findByMultiHop(ORIGIN, DEST, FLIGHT_ONE_DATE);
     List<Flight> leg1 = List.of(flights.get(0).getLeg1());
     List<Flight> leg2 = List.of(flights.get(0).getLeg2());
@@ -181,11 +176,43 @@ public class FlightServiceTests {
     System.out.println(leg2.get(0).getFlightId() + "  =  " + FLIGHT_TWO.getFlightId());
     assertEquals(FLIGHT_ONE.getFlightId(), leg1.get(0).getFlightId());
     assertEquals(FLIGHT_TWO.getFlightId(), leg2.get(0).getFlightId());
+    assertEquals(FLIGHT_ONE.getDepartTime(), leg1.get(0).getDepartTime());
+    assertEquals(FLIGHT_TWO.getArrivalTime(), leg2.get(0).getArrivalTime());
   }
 
-  //TODO No connecting flights within time parameters
+  @Test
+  @DisplayName("MultiHop Flight, find flights, expect empty list")
+  void findMultiHopFlightConnectingFlightNextDay() {
+    when(flightDao.findByFlightNumberInAndDepartTimeBetween(FLIGHT_NUMBERS, FLIGHT_ONE_START, FLIGHT_ONE_END))
+      .thenReturn(List.of(FLIGHT_ONE));
+    when(flightDao.findByFlightNumberInAndDepartTimeBetween(
+        List.of(),
+        FLIGHT_CONNECT_NEXT_DAY_ACTUAL_START,
+        FLIGHT_CONNECT_NEXT_DAY_ACTUAL_END))
+      .thenReturn(List.of(FLIGHT_CONNECT_NEXT_DAY));
+    when(flightDetailsService.findHubsFromOrigin(ORIGIN)).thenReturn(List.of(FLIGHT_DETAILS_ONE));
+    when(flightDetailsService.findHubsFromDest(DEST)).thenReturn(List.of(FLIGHT_DETAILS_TWO));
 
-  //TODO Round Trip with multi-hop
+    List<MultiHopFlight> flights = flightService.findByMultiHop(ORIGIN, DEST, FLIGHT_ONE_DATE);
+    assertTrue(flights.isEmpty());
+  }
+
+  @Test
+  @DisplayName("MultiHop Flight, no connecting flights, expect empty list")
+  void findMultiHopFlightNoConnectingFlights() {
+    when(flightDao.findByFlightNumberInAndDepartTimeBetween(FLIGHT_NUMBERS, FLIGHT_ONE_START, FLIGHT_ONE_END))
+      .thenReturn(List.of(FLIGHT_ONE));
+    when(flightDao.findByFlightNumberInAndDepartTimeBetween(
+        FLIGHT_NUMBERS_TWO,
+        FLIGHT_CONNECT_NEXT_DAY_ACTUAL_START,
+        FLIGHT_CONNECT_NEXT_DAY_ACTUAL_END))
+      .thenReturn(List.of(FLIGHT_CONNECT_NEXT_DAY));
+    when(flightDetailsService.findHubsFromOrigin(ORIGIN)).thenReturn(List.of(FLIGHT_DETAILS_ONE));
+    when(flightDetailsService.findHubsFromDest(DEST)).thenReturn(List.of(FLIGHT_DETAILS_TWO));
+
+    List<MultiHopFlight> flights = flightService.findByMultiHop(ORIGIN, DEST, FLIGHT_ONE_DATE);
+    assertTrue(flights.isEmpty());
+  }
 
   private LocalDateTime getFormattedDate(String date, boolean isStartDate) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

@@ -5,7 +5,7 @@ spring:
    application:
       name: orchestrator
    datasource:
-      url: jdbc:mysql://smoothstack-project.cqxybfmjssty.us-east-2.rds.amazonaws.com:3306/utopia
+      url: jdbc:mysql://localhost:3306/utopia-airlines
       username: ${SPRING_DB_UNAME}
       password: ${SPRING_DB_PASS}
       hikari:

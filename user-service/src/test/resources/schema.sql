@@ -1,6 +1,6 @@
-CREATE SCHEMA IF NOT EXISTS `utopia`;
-USE `utopia`;
-CREATE TABLE IF NOT EXISTS `utopia`.`tbl_users` (
+CREATE SCHEMA IF NOT EXISTS `utopia-airlines`;
+USE `utopia-airlines`;
+CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_users` (
   `userId` INT NOT NULL AUTO_INCREMENT,
   `password` VARCHAR(100) NOT NULL,
   `email` VARCHAR(50) NULL DEFAULT NULL,

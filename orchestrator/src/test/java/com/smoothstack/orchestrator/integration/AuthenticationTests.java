@@ -76,7 +76,7 @@ public class AuthenticationTests {
         .andExpect(status().isCreated())
         .andExpect(header().exists("Location"));
   }
-  
+
   @DisplayName("sign up with missing fields")
   @Test
   @Order(3)
@@ -149,7 +149,7 @@ public class AuthenticationTests {
     mockMvc.perform(post("/auth/login").content(asJsonString(credentials)).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isUnauthorized());
   }
-  
+
   @DisplayName("login with a confirmed account, too many fields")
   @Test
   @Order(11)

@@ -9,7 +9,6 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smoothstack.booking.entity.Booking;
 import com.smoothstack.booking.entity.BookingRequest;
-import com.smoothstack.booking.entity.Traveler;
 
 import static org.hamcrest.Matchers.*;
 
@@ -25,7 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
@@ -41,8 +39,10 @@ public class BookingIntegrationTests {
 
   private final Integer BOOKING_ID = 1;
   private final Integer BOOKING_NOT_OWNED_ID = 2;
+  private final Integer BOOKING_ID_NOT_FOUND = 99;
   private final Long LOGGED_IN_USER_ID = 1L;
   private final Long LOGGED_IN_USER_ID_NOT_AUTHORIZED= 5L;
+  private final Long LOGGED_IN_EMPLOYEE= 5L;
   private final Integer USER_ID_NO_BOOKINGS = 99;
   private final Integer FLIGHT_ID = 1;
   private final Integer TRAVELER_ID = 1;
@@ -242,7 +242,6 @@ public class BookingIntegrationTests {
   @Order(4)
   void testUpdateBooking() throws Exception {
     Booking booking = new Booking(BOOKING_ID.longValue(), false, "payment", LOGGED_IN_USER_ID.intValue(), List.of(), Set.of());
-    // BookingRequest bookingRequest = new BookingRequest(booking, List.of(TRAVELER_ID));
     mockMvc.perform(
       put("/booking")
         .header("user-id", LOGGED_IN_USER_ID)
@@ -259,7 +258,6 @@ public class BookingIntegrationTests {
   @Order(4)
   void testUpdateBookingNotFound() throws Exception {
     Booking booking = new Booking(USER_ID_NO_BOOKINGS.longValue(), false, "payment", LOGGED_IN_USER_ID.intValue(), List.of(), Set.of());
-    // BookingRequest bookingRequest = new BookingRequest(booking, List.of(TRAVELER_ID));
     mockMvc.perform(
       put("/booking")
         .header("user-id", LOGGED_IN_USER_ID)
@@ -270,12 +268,11 @@ public class BookingIntegrationTests {
         .andExpect(status().isNotFound());
   }
 
-  @DisplayName("test update booking nost authorized user, expect forbidden")
+  @DisplayName("test update booking with unauthorized user, expect forbidden")
   @Test
   @Order(4)
   void testUpdateBookingForbidden() throws Exception {
     Booking booking = new Booking(BOOKING_ID.longValue(), false, "payment", LOGGED_IN_USER_ID.intValue(), List.of(), Set.of());
-    // BookingRequest bookingRequest = new BookingRequest(booking, List.of(TRAVELER_ID));
     mockMvc.perform(
       put("/booking")
         .header("user-id", LOGGED_IN_USER_ID_NOT_AUTHORIZED)
@@ -291,7 +288,6 @@ public class BookingIntegrationTests {
   @Order(4)
   void testUpdateBookingEmployeeRole() throws Exception {
     Booking booking = new Booking(BOOKING_ID.longValue(), false, "payment", LOGGED_IN_USER_ID.intValue(), List.of(), Set.of());
-    // BookingRequest bookingRequest = new BookingRequest(booking, List.of(TRAVELER_ID));
     mockMvc.perform(
       put("/booking")
         .header("user-id", LOGGED_IN_USER_ID_NOT_AUTHORIZED)
@@ -303,7 +299,7 @@ public class BookingIntegrationTests {
         .andExpect(jsonPath("$.isActive", is(false)));
   }
 
-  @DisplayName("test delete booking as a valid user, expect OK   ")
+  @DisplayName("test delete booking as a valid user, expect OK")
   @Test
   @Order(6)
   void testDeleteBooking() throws Exception {
@@ -320,7 +316,7 @@ public class BookingIntegrationTests {
   @Order(7)
   void testDeleteBookingNotFound() throws Exception {
     mockMvc.perform(
-      delete("/booking/" + USER_ID_NO_BOOKINGS)
+      delete("/booking/" + BOOKING_ID_NOT_FOUND)
         .header("user-id", LOGGED_IN_USER_ID)
         .header("user-role", "USER")
       )
@@ -345,7 +341,7 @@ public class BookingIntegrationTests {
   void testDeleteBookingWithEmployeeRole() throws Exception {
     mockMvc.perform(
       delete("/booking/" + BOOKING_NOT_OWNED_ID)
-        .header("user-id", LOGGED_IN_USER_ID_NOT_AUTHORIZED)
+        .header("user-id", LOGGED_IN_EMPLOYEE)
         .header("user-role", "EMPLOYEE")
       )
         .andExpect(status().isOk());

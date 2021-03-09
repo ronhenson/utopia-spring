@@ -4,23 +4,23 @@
 -- MySQL Workbench Forward Engineering
 
   -- -----------------------------------------------------
-  -- Schema utopia
+  -- Schema utopia-airlines
   -- -----------------------------------------------------
-  CREATE SCHEMA IF NOT EXISTS `utopia`;
-  USE `utopia`;
+  CREATE SCHEMA IF NOT EXISTS `utopia-airlines`;
+  USE `utopia-airlines`;
 -- -----------------------------------------------------
-  -- Table `utopia`.`tbl_airport`
+  -- Table `utopia-airlines`.`tbl_airport`
   -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_airport` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_airport` (
     `iataIdent` VARCHAR(4) NOT NULL,
     `city` VARCHAR(100) NOT NULL,
     `name` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`iataIdent`)
   );
 -- -----------------------------------------------------
-  -- Table `utopia`.`tbl_users`
+  -- Table `utopia-airlines`.`tbl_users`
   -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_users` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_users` (
     `userId` INT NOT NULL AUTO_INCREMENT,
     `password` VARCHAR(100) NOT NULL,
     `email` VARCHAR(50) NULL DEFAULT NULL,
@@ -33,20 +33,20 @@
     UNIQUE INDEX `tbl_users_email_uindex` (`email` ASC)
   );
 -- -----------------------------------------------------
-  -- Table `utopia`.`tbl_booking`
+  -- Table `utopia-airlines`.`tbl_booking`
   -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_booking` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_booking` (
     `bookingId` INT NOT NULL AUTO_INCREMENT,
     `isActive` TINYINT NOT NULL,
     `stripeId` VARCHAR(45) NOT NULL,
     `bookerId` INT NOT NULL,
     PRIMARY KEY (`bookingId`),
-    CONSTRAINT `fk_tbl_booking_tbl_users1` FOREIGN KEY (`bookerId`) REFERENCES `utopia`.`tbl_users` (`userId`)
+    CONSTRAINT `fk_tbl_booking_tbl_users1` FOREIGN KEY (`bookerId`) REFERENCES `utopia-airlines`.`tbl_users` (`userId`)
   );
 -- -----------------------------------------------------
-  -- Table `utopia`.`tbl_traveler`
+  -- Table `utopia-airlines`.`tbl_traveler`
   -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_traveler` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_traveler` (
     `travelerId` INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(45) NOT NULL,
     `address` VARCHAR(45) NOT NULL,
@@ -56,28 +56,28 @@
     PRIMARY KEY (`travelerId`)
   );
 -- -----------------------------------------------------
-  -- Table `utopia`.`tbl_bookings_has_travelers`
+  -- Table `utopia-airlines`.`tbl_bookings_has_travelers`
   -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_bookings_has_travelers` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_bookings_has_travelers` (
     `bookingId` INT NOT NULL,
     `travelerId` INT NOT NULL,
     PRIMARY KEY (`bookingId`, `travelerId`),
-    CONSTRAINT `fk_tbl_bookings_has_tbl_traveler_tbl_bookings1` FOREIGN KEY (`bookingId`) REFERENCES `utopia`.`tbl_booking` (`bookingId`),
-    CONSTRAINT `fk_tbl_bookings_has_tbl_traveler_tbl_traveler1` FOREIGN KEY (`travelerId`) REFERENCES `utopia`.`tbl_traveler` (`travelerId`)
+    CONSTRAINT `fk_tbl_bookings_has_tbl_traveler_tbl_bookings1` FOREIGN KEY (`bookingId`) REFERENCES `utopia-airlines`.`tbl_booking` (`bookingId`),
+    CONSTRAINT `fk_tbl_bookings_has_tbl_traveler_tbl_traveler1` FOREIGN KEY (`travelerId`) REFERENCES `utopia-airlines`.`tbl_traveler` (`travelerId`)
   );
   -- -----------------------------------------------------
--- Table `utopia`.`tbl_flight_details`
+-- Table `utopia-airlines`.`tbl_flight_details`
 -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_flight_details` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_flight_details` (
     `flightNumber` VARCHAR(4) NOT NULL,
     `departCityId` VARCHAR(4) NULL DEFAULT NULL,
     `arriveCityId` VARCHAR(4) NULL DEFAULT NULL,
     PRIMARY KEY (`flightNumber`)
   );
 -- -----------------------------------------------------
-  -- Table `utopia`.`tbl_flight`
+  -- Table `utopia-airlines`.`tbl_flight`
   -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_flight` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_flight` (
     `flightId` INT NOT NULL AUTO_INCREMENT,
     `departTime` DATETIME NOT NULL,
     `seatsAvailable` INT NOT NULL,
@@ -85,34 +85,34 @@
     `arrivalTime` DATETIME NOT NULL,
     `flightNumber` VARCHAR(4) NULL DEFAULT NULL,
     PRIMARY KEY (`flightId`),
-    CONSTRAINT `tbl_flight_tbl_flight_details_flightNumber_fk` FOREIGN KEY (`flightNumber`) REFERENCES `utopia`.`tbl_flight_details` (`flightNumber`)
+    CONSTRAINT `tbl_flight_tbl_flight_details_flightNumber_fk` FOREIGN KEY (`flightNumber`) REFERENCES `utopia-airlines`.`tbl_flight_details` (`flightNumber`)
   );
 -- -----------------------------------------------------
-  -- Table `utopia`.`tbl_flight_has_bookings`
+  -- Table `utopia-airlines`.`tbl_flight_has_bookings`
   -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_flight_has_bookings` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_flight_has_bookings` (
     `flightId` INT NOT NULL,
     `bookingId` INT NOT NULL,
     PRIMARY KEY (`flightId`, `bookingId`),
-    CONSTRAINT `fk_tbl_flights_has_tbl_bookings_tbl_bookings1` FOREIGN KEY (`bookingId`) REFERENCES `utopia`.`tbl_booking` (`bookingId`),
-    CONSTRAINT `fk_tbl_flights_has_tbl_bookings_tbl_flights1` FOREIGN KEY (`flightId`) REFERENCES `utopia`.`tbl_flight` (`flightId`)
+    CONSTRAINT `fk_tbl_flights_has_tbl_bookings_tbl_bookings1` FOREIGN KEY (`bookingId`) REFERENCES `utopia-airlines`.`tbl_booking` (`bookingId`),
+    CONSTRAINT `fk_tbl_flights_has_tbl_bookings_tbl_flights1` FOREIGN KEY (`flightId`) REFERENCES `utopia-airlines`.`tbl_flight` (`flightId`)
   );
 -- -----------------------------------------------------
-  -- Table `utopia`.`tbl_user_signup_token`
+  -- Table `utopia-airlines`.`tbl_user_signup_token`
   -- -----------------------------------------------------
-  CREATE TABLE IF NOT EXISTS `utopia`.`tbl_user_signup_token` (
+  CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_user_signup_token` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `confirmationToken` VARCHAR(100) NOT NULL,
     `createdDate` DATETIME NOT NULL,
     `userId` INT NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `tbl_user_signup_token_confirmationToken_uindex` (`confirmationToken` ASC) ,
-    CONSTRAINT `tbl_user_signup_token_tbl_users_userId_fk` FOREIGN KEY (`userId`) REFERENCES `utopia`.`tbl_users` (`userId`)
+    CONSTRAINT `tbl_user_signup_token_tbl_users_userId_fk` FOREIGN KEY (`userId`) REFERENCES `utopia-airlines`.`tbl_users` (`userId`)
   );
 -- -----------------------------------------------------
--- Table `utopia`.`tbl_roles`
+-- Table `utopia-airlines`.`tbl_roles`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `utopia`.`tbl_roles` (
+CREATE TABLE IF NOT EXISTS `utopia-airlines`.`tbl_roles` (
   `userRole` INT NOT NULL,
   `roleName` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`userRole`)
